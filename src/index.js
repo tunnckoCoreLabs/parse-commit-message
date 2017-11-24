@@ -37,7 +37,11 @@ function parse (commitMessage, plugins) {
     footer,
   }
 
-  return arrayify(plugins).reduce((acc, fn) => Object.assign({}, acc, fn(acc)), commit)
+  return arrayify(plugins).reduce((acc, fn) => {
+    const result = fn(Object.assign({}, acc))
+
+    return Object.assign({}, acc, result)
+  }, commit)
 }
 
 /**

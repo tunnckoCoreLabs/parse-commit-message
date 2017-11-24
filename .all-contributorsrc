@@ -1,5 +1,5 @@
 {
-  "projectName": "detect-next-version",
+  "projectName": "parse-commit-message",
   "projectOwner": "tunnckoCore",
   "files": [
     "CONTRIBUTORS.md"

@@ -5,7 +5,7 @@ Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
-| [<img src="https://avatars3.githubusercontent.com/u/5038030?v=4" width="150px;"/><br /><sub><b>Charlike Mike Reagent</b></sub>](https://i.am.charlike.online)<br />[💬](#question-olstenlarck "Answering Questions") [💻](https://github.com/tunnckoCore/detect-next-version/commits?author=olstenlarck "Code") [📖](https://github.com/tunnckoCore/detect-next-version/commits?author=olstenlarck "Documentation") [👀](#review-olstenlarck "Reviewed Pull Requests") [⚠️](https://github.com/tunnckoCore/detect-next-version/commits?author=olstenlarck "Tests") |
+| [<img src="https://avatars3.githubusercontent.com/u/5038030?v=4" width="150px;"/><br /><sub><b>Charlike Mike Reagent</b></sub>](https://i.am.charlike.online)<br />[💬](#question-olstenlarck "Answering Questions") [💻](https://github.com/tunnckoCore/parse-commit-message/commits?author=olstenlarck "Code") [📖](https://github.com/tunnckoCore/parse-commit-message/commits?author=olstenlarck "Documentation") [👀](#review-olstenlarck "Reviewed Pull Requests") [⚠️](https://github.com/tunnckoCore/parse-commit-message/commits?author=olstenlarck "Tests") |
 | :---: |
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
