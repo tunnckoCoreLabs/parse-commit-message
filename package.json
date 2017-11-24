@@ -1,0 +1,70 @@
+{
+  "name": "parse-commit-message",
+  "version": "0.0.0-semantically-released",
+  "description": "An extensible parser for commit message that follows Conventional Commits v1 spec",
+  "repository": "tunnckoCore/parse-commit-message",
+  "author": "Charlike Mike Reagent (https://i.am.charlike.online)",
+  "nspId": "e5e6805a-90f7-4e44-b19f-a272e5112bb3",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "NODE_ENV=test yarn hela test",
+    "precommit": "yarn hela precommit",
+    "commit": "yarn hela commit",
+    "prepublishOnly": "yarn hela protect"
+  },
+  "license": "Apache-2.0",
+  "licenseStart": 2017,
+  "engines": {
+    "node": ">=8",
+    "npm": ">=5",
+    "yarn": ">=1"
+  },
+  "files": [
+    "src/"
+  ],
+  "dependencies": {
+    "arrayify": "^1.0.0",
+    "collect-mentions": "^0.1.1"
+  },
+  "devDependencies": {
+    "eslint": "^4.11.0",
+    "eslint-config-tunnckocore": "^0.3.0",
+    "hela": "^2.0.6",
+    "hela-config-tunnckocore": "^2.2.8",
+    "mukla": "^0.4.9"
+  },
+  "keywords": [
+    "automation"
+  ],
+  "verb": {
+    "run": true,
+    "toc": {
+      "render": true,
+      "method": "preWrite",
+      "maxdepth": 3
+    },
+    "layout": "empty",
+    "tasks": [
+      "readme"
+    ],
+    "related": {
+      "list": [
+        "dush",
+        "p-map-series",
+        "execa",
+        "hela",
+        "gitcommit",
+        "parse-git-log",
+        "mri"
+      ],
+      "highlight": "hela"
+    },
+    "lint": {
+      "reflinks": true
+    },
+    "reflinks": [
+      "execa",
+      "hela"
+    ]
+  }
+}
