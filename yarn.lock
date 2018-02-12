@@ -217,7 +217,7 @@ array-unique@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/array-unique/-/array-unique-0.2.1.tgz#a1d97ccafcbc2625cc70fadceb36a50c58b01a53"
 
-arrayify@1.0.0, arrayify@^1.0.0:
+arrayify@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/arrayify/-/arrayify-1.0.0.tgz#f06a98235b8ef14ca1995992411a9fefb4e49cfc"
 
@@ -553,7 +553,7 @@ code-point-at@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
 
-collect-mentions@^0.1.1:
+collect-mentions@0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/collect-mentions/-/collect-mentions-0.1.1.tgz#5fbb3d9e5a0fa4b458a46900b93d1aabd2647fd2"
   dependencies:
@@ -845,7 +845,7 @@ eslint-config-airbnb@^16.0.0:
   dependencies:
     eslint-config-airbnb-base "^12.1.0"
 
-eslint-config-tunnckocore@^0.3.0:
+eslint-config-tunnckocore@0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/eslint-config-tunnckocore/-/eslint-config-tunnckocore-0.3.0.tgz#222fec1182bc52dd8d92925921f07f61b068e6ce"
   dependencies:
@@ -945,7 +945,7 @@ eslint-visitor-keys@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#3f3180fb2e291017716acb4c9d6d5b5c34a6a81d"
 
-eslint@^4.0.0, eslint@^4.11.0, eslint@^4.5.0:
+eslint@4.17.0, eslint@^4.0.0, eslint@^4.5.0:
   version "4.17.0"
   resolved "https://registry.yarnpkg.com/eslint/-/eslint-4.17.0.tgz#dc24bb51ede48df629be7031c71d9dc0ee4f3ddf"
   dependencies:
@@ -1424,7 +1424,7 @@ hawk@~6.0.2:
     hoek "4.x.x"
     sntp "2.x.x"
 
-hela-config-tunnckocore@^2.2.8:
+hela-config-tunnckocore@2.2.41:
   version "2.2.41"
   resolved "https://registry.yarnpkg.com/hela-config-tunnckocore/-/hela-config-tunnckocore-2.2.41.tgz#cbb4387cd3935f4d4533a7bf51c0f0a9c884fc56"
   dependencies:
@@ -1439,7 +1439,7 @@ hela-config-tunnckocore@^2.2.8:
     rimraf "2.6.2"
     semver "5.5.0"
 
-hela@^2.0.6:
+hela@2.0.6:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/hela/-/hela-2.0.6.tgz#5f4b3415c08bc11770822fb89864ac3e0090f747"
   dependencies:
@@ -2121,7 +2121,7 @@ ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
 
-mukla@^0.4.9:
+mukla@0.4.9:
   version "0.4.9"
   resolved "https://registry.yarnpkg.com/mukla/-/mukla-0.4.9.tgz#195cf3954154597e35599fdbb4a13c2a41d733f4"
   dependencies:
