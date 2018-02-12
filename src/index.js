@@ -82,8 +82,8 @@ function isBreakingChange ({ subject, body, footer }) {
   body = body || ''
   footer = footer || ''
 
-  const re = 'BREAKING CHANGE:'
-  return subject.includes(re) || body.includes(re) || footer.includes(re)
+  const re = /^BREAKING(?: CHANGES?)?:/
+  return re.test(subject) || re.test(body) || re.test(footer)
 }
 
 /**
