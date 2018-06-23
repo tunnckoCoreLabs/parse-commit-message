@@ -27,7 +27,7 @@
     "collect-mentions": "0.1.1"
   },
   "devDependencies": {
-    "eslint": "4.19.1",
+    "eslint": "5.0.0",
     "eslint-config-tunnckocore": "1.0.1",
     "hela": "2.0.10",
     "hela-config-tunnckocore": "3.0.26",
