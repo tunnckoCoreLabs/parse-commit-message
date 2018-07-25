@@ -28,7 +28,7 @@
     "gitcommit": "^1.0.8",
     "new-release": "^4.0.3",
     "nyc": "^12.0.2",
-    "xaxa": "^1.3.6"
+    "xaxa": "^2.0.0"
   },
   "files": [
     "src",
