@@ -1,47 +1,81 @@
 {
   "name": "parse-commit-message",
-  "version": "0.0.0-semantically-released",
   "description": "An extensible parser for commit message that follows Conventional Commits v1 spec",
-  "repository": "tunnckoCore/parse-commit-message",
-  "author": "Charlike Mike Reagent (https://i.am.charlike.online)",
-  "nspId": "e5e6805a-90f7-4e44-b19f-a272e5112bb3",
-  "main": "./src/index.js",
-  "scripts": {
-    "test": "NODE_ENV=test yarn hela test",
-    "precommit": "yarn hela precommit",
-    "commit": "yarn hela commit",
-    "prepublishOnly": "yarn hela protect"
-  },
   "license": "Apache-2.0",
-  "licenseStart": 2017,
-  "engines": {
-    "node": ">=8",
-    "npm": ">=5",
-    "yarn": ">=1"
+  "licenseStart": "2017",
+  "scripts": {
+    "lint": "xaxa",
+    "test": "nyc --require esm asia",
+    "gitadd": "git status --porcelain && git add -A",
+    "commit-dry": "yarn gitadd && yarn commit",
+    "precommit": "yarn lint && yarn test && yarn gitadd",
+    "commit": "gitcommit -sS",
+    "prebuild": "rm -rf dist && mkdir dist",
+    "build": "ascjs src dist",
+    "prepublishOnly": "yarn build"
   },
-  "files": [
-    "src/"
-  ],
+  "engines": {
+    "node": "^6.9.0 || ^8.9.0 || ^10.6.0"
+  },
   "dependencies": {
-    "arrayify": "1.0.0",
-    "collect-mentions": "0.1.1"
+    "arrayify": "^1.0.0",
+    "collect-mentions": "^1.0.1"
   },
   "devDependencies": {
-    "eslint": "5.2.0",
-    "eslint-config-tunnckocore": "1.0.1",
-    "hela": "2.0.10",
-    "hela-config-tunnckocore": "3.0.26",
-    "mukla": "0.4.9"
+    "ascjs": "^2.4.0",
+    "asia": "^0.19.7",
+    "esm": "^3.0.72",
+    "gitcommit": "^1.0.8",
+    "new-release": "^4.0.3",
+    "nyc": "^12.0.2",
+    "xaxa": "^1.3.6"
   },
-  "keywords": [
-    "automation"
+  "files": [
+    "src",
+    "dist"
   ],
+  "main": "dist/index.js",
+  "module": "src/index.js",
+  "version": "0.0.0-semantically-released",
+  "repository": "olstenlarck/parse-commit-message",
+  "homepage": "https://github.com/olstenlarck/parse-commit-message",
+  "author": "Charlike Mike Reagent (https://i.am.charlike.online)",
+  "publishConfig": {
+    "access": "public"
+  },
+  "eslintConfig": {
+    "extends": "xaxa"
+  },
+  "renovate": {
+    "extends": "tunnckocore"
+  },
+  "nyc": {
+    "statements": 0,
+    "functions": 0,
+    "branches": 0,
+    "lines": 0,
+    "cache": true,
+    "check-coverage": true,
+    "reporter": [
+      "lcov",
+      "text"
+    ],
+    "exclude": [
+      "test"
+    ],
+    "extension": [
+      ".js",
+      ".jsx",
+      ".mjs"
+    ]
+  },
   "verb": {
     "run": true,
     "toc": {
       "render": true,
       "method": "preWrite",
-      "maxdepth": 3
+      "maxdepth": 3,
+      "footer": ""
     },
     "layout": "empty",
     "tasks": [
@@ -49,22 +83,19 @@
     ],
     "related": {
       "list": [
-        "dush",
-        "p-map-series",
-        "execa",
-        "hela",
+        "asia",
         "gitcommit",
-        "parse-git-log",
-        "mri"
-      ],
-      "highlight": "hela"
+        "new-release",
+        "xaxa",
+        "charlike"
+      ]
     },
     "lint": {
       "reflinks": true
     },
     "reflinks": [
-      "execa",
-      "hela"
+      "new-release",
+      "semantic-release"
     ]
   }
 }

@@ -1,9 +1,14 @@
 version: 2
 
-defaults: &defaults
+node8: &node8
   working_directory: ~/parse-commit-message
   docker:
-    - image: circleci/node:8@sha256:cf63f9a9a1eed0a978072293a4a4e35a53f0a77655c64a0ad51ca332e138c82a
+    - image: circleci/node:8
+
+node10: &node10
+  working_directory: ~/parse-commit-message
+  docker:
+    - image: circleci/node:10
 
 restore_modules_cache: &restore_modules_cache
   restore_cache:
@@ -12,73 +17,74 @@ restore_modules_cache: &restore_modules_cache
     # fallback to using the latest cache if no exact match is found
     - parse-commit-message-
 
+jobinstall: &jobinstall
+  steps:
+    - checkout
+    - *restore_modules_cache
+    - run:
+        name: Installing Dependencies
+        command: yarn install
+    - save_cache:
+        key: parse-commit-message-{{ checksum "yarn.lock" }}
+        paths: node_modules
+    - run:
+        name: Remove node_modules to cleanup workspace
+        command: rm -rf node_modules
+
+jobtest: &jobtest
+  steps:
+    - checkout
+    - *restore_modules_cache
+    - run:
+        name: Running tests and checks
+        command: yarn test
+    - run:
+        name: Sending test coverage to CodeCov
+        command: bash <(curl -s https://codecov.io/bash)
+
 
 jobs:
-  install:
-    <<: *defaults
-    steps:
-      - checkout
-      - *restore_modules_cache
-      - run:
-          name: Installing Dependencies
-          command: yarn install
-      - save_cache:
-          key: parse-commit-message-{{ checksum "yarn.lock" }}
-          paths: node_modules
-      - run:
-          name: Remove node_modules to cleanup workspace
-          command: rm -rf node_modules
+  install-on-node8:
+    <<: *node8
+    <<: *jobinstall
 
-  test:
-    <<: *defaults
-    steps:
-      - checkout
-      - *restore_modules_cache
-      - run:
-          name: Running tests and checks
-          command: yarn test
-      - run:
-          name: Sending test coverage to CodeCov
-          command: bash <(curl -s https://codecov.io/bash)
+  test-on-node8:
+    <<: *node8
+    <<: *jobtest
 
-  build:
-    <<: *defaults
-    steps:
-      - checkout
-      - *restore_modules_cache
-      - run:
-          name: Creating distributable files
-          command: echo ok
-      - store_artifacts:
-          path: dist
-          destination: parse-commit-message
+  install-on-node10:
+    <<: *node10
+    <<: *jobinstall
 
-  publish:
-    <<: *defaults
+  test-on-node10:
+    <<: *node10
+    <<: *jobtest
+
+  release:
+    <<: *node10
     steps:
       - checkout
       - *restore_modules_cache
       - run:
-          name: Trying to deploy
-          command: yarn hela release
+          name: Releasing and publishing
+          command: yarn new-release
 
 workflows:
   version: 2
   automated:
     jobs:
-      - install
-      - test:
+      - install-on-node8
+      - test-on-node8:
           requires:
-            - install
-      - build:
+            - install-on-node8
+      - install-on-node10
+      - test-on-node10:
           requires:
-            - test
-          filters:
-            branches:
-              only: master
-      - publish:
+            - install-on-node10
+      - release:
           requires:
-            - build
+            - test-on-node8
+            - test-on-node10
           filters:
             branches:
               only: master

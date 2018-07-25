@@ -1,47 +1,57 @@
 /**
- * @copyright 2017-present, Charlike Mike Reagent <olsten.larck@gmail.com>
+ * @copyright 2017-present, Charlike Mike Reagent (https://i.am.charlike.online)
  * @license Apache-2.0
  */
 
-const arrayify = require('arrayify')
-const collectMentions = require('collect-mentions')
+import arrayify from 'arrayify';
+import collectMentions from 'collect-mentions';
 
 /**
  *
  * @param {string} commitMessage required, a whole commit message
  * @param {Array} plugins optional, a list of functions that get passed with `commit` object
  */
-function parse (commitMessage, plugins) {
+function parse(commitMessage, plugins) {
   if (typeof commitMessage !== 'string') {
-    throw new TypeError('parseCommitMessage.parse: expect `commitMessage` to be string')
+    throw new TypeError(
+      'parseCommitMessage.parse: expect `commitMessage` to be string',
+    );
   }
 
-  const lines = commitMessage.split('\n')
-  const header = lines.shift()
-  const body = lines.shift() || null
-  const footer = lines.join('\n').trim() || null
-  const parts = /^(\w+)(?:\((.+)\))?: (.+)$/.exec(header)
+  const elements = commitMessage.split(/\r?\n\r?\n/);
+  const header = elements[0];
+  const body = elements.length > 2 ? elements[1] : null;
+  const footer = elements.length > 2 ? elements[2] : elements[1];
+
+  // eslint-disable-next-line unicorn/no-unsafe-regex
+  const parts = /^(\w+)(?:\((.+)\))?: (.+)$/.exec(header);
 
   if (!parts) {
-    throw new Error('invalid commit message: <type>[optional scope]: <description>')
+    throw new Error(
+      'invalid commit message: <type>[optional scope]: <description>',
+    );
   }
 
-  const [type, scope, subject] = parts.slice(1)
+  const [type, scope, subject] = parts.slice(1);
 
   const commit = {
-    type,
-    scope,
-    subject,
-    header,
-    body,
-    footer,
-  }
+    header: {
+      type,
+      scope,
+      subject,
+      toString() {
+        return header;
+      },
+    },
+    body: (body && body.trim()) || null,
+    footer: (footer && footer.trim()) || null,
+  };
 
   return arrayify(plugins).reduce((acc, fn) => {
-    const result = fn(Object.assign({}, acc))
+    const result = fn(Object.assign({}, acc));
 
-    return Object.assign({}, acc, result)
-  }, commit)
+    return Object.assign({}, acc, result);
+  }, commit);
 }
 
 /**
@@ -55,21 +65,22 @@ function parse (commitMessage, plugins) {
  *
  * @param {Object} commit, the commit object coming from `parseCommitMessage`
  */
-function incrementMapper (commit) {
-  const isBreaking = isBreakingChange(commit)
-  let increment = null
+function incrementMapper(commit) {
+  let isBreaking = isBreakingChange(commit);
+  let increment = null;
 
-  if (/fix|bugfix|patch/.test(commit.type)) {
-    increment = 'patch'
+  if (/fix|bugfix|patch/.test(commit.header.type)) {
+    increment = 'patch';
   }
-  if (/feat|feature|minor/.test(commit.type)) {
-    increment = 'minor'
+  if (/feat|feature|minor/.test(commit.header.type)) {
+    increment = 'minor';
   }
-  if (/break|breaking|major/.test(commit.type) || isBreaking) {
-    increment = 'major'
+  if (/break|breaking|major/.test(commit.header.type) || isBreaking) {
+    increment = 'major';
   }
+  isBreaking = isBreaking || increment === 'major';
 
-  return { increment, isBreaking }
+  return { increment, isBreaking };
 }
 
 /* eslint-disable no-param-reassign */
@@ -78,12 +89,12 @@ function incrementMapper (commit) {
  *
  * @param {Object} commit, the commit object coming from `parseCommitMessage`
  */
-function isBreakingChange ({ subject, body, footer }) {
-  body = body || ''
-  footer = footer || ''
+function isBreakingChange({ header, body, footer }) {
+  body = body || '';
+  footer = footer || '';
 
-  const re = /^BREAKING(?: CHANGES?)?:/
-  return re.test(subject) || re.test(body) || re.test(footer)
+  const re = /^BREAKING\s+CHANGES?:\s+/;
+  return re.test(header.subject) || re.test(body) || re.test(footer);
 }
 
 /**
@@ -94,13 +105,13 @@ function isBreakingChange ({ subject, body, footer }) {
  * @param   {Object} commit, the commit object coming from `parseCommitMessage`
  * @returns {Object} with a `mentions` array property
  */
-function mentionsMapper ({ subject, body, footer }) {
+function mentionsMapper({ header, body, footer }) {
   const mentions = []
-    .concat(collectMentions(subject))
+    .concat(collectMentions(header.subject))
     .concat(collectMentions(body))
-    .concat(collectMentions(footer))
+    .concat(collectMentions(footer));
 
-  return { mentions }
+  return mentions.length > 0 ? { mentions } : null;
 }
 
 /**
@@ -109,14 +120,14 @@ function mentionsMapper ({ subject, body, footer }) {
 const mappers = {
   increment: incrementMapper,
   mentions: mentionsMapper,
-}
+};
 
 /**
  * A list of all plugins, such as `mappers` but no names.
  */
-const plugins = Object.keys(mappers).map((name) => mappers[name])
+const plugins = Object.keys(mappers).map((name) => mappers[name]);
 
 /**
  * Expose everything
  */
-module.exports = { mappers, plugins, parse }
+export { mappers, plugins, parse };

@@ -1,53 +1,140 @@
 /**
- * @copyright 2017-present, Charlike Mike Reagent <olsten.larck@gmail.com>
+ * @copyright 2017-present, Charlike Mike Reagent (https://i.am.charlike.online)
  * @license Apache-2.0
  */
 
-const test = require('mukla')
-const { parse, plugins } = require('../src/index.js')
+import test from 'asia';
+import { parse, plugins, mappers } from '../src/index';
 
-test('should .parse method to work correctly', (done) => {
-  const commitMsg1 = `feat(ng-list): Allow custom separator
-bla bla bla
+test('should be okey with multiline body and without scope', (t) => {
+  const msg = `feat: foo bar baz
 
-BREAKING CHANGE: some breaking change.
-Thanks @foobar
-`
+Some multiline body
+Alleluah
 
-  const commit = parse(commitMsg1, plugins)
-  // => { type: 'feat',
-  //   scope: 'ng-list',
-  //   subject: 'Allow custom separator',
-  //   header: 'feat(ng-list): Allow custom separator',
-  //   body: 'bla bla bla',
-  //   footer: 'BREAKING CHANGE: some breaking change.\nThanks @foobar' }
+So there is some updated things
+fixes #34
+resolves #225
+`;
 
-  test.strictEqual(typeof commit, 'object')
-  test.strictEqual(commit.type, 'feat')
-  test.strictEqual(commit.scope, 'ng-list')
-  test.strictEqual(commit.subject, 'Allow custom separator')
-  test.strictEqual(commit.body, 'bla bla bla')
-  test.strictEqual(commit.header, 'feat(ng-list): Allow custom separator')
-  test.strictEqual(
+  const commit = parse(msg, plugins);
+  // => {
+  //   header: {
+  //     type: 'feat',
+  //     scope: undefined,
+  //     subject: 'foo bar baz',
+  //     toString: [Function: toString],
+  //   },
+  //   body: 'Some multiline body\nAlleluah',
+  //   footer: 'So there is some updated things\nfixes #34\nresolves #225\n',
+  //   increment: 'minor',
+  //   isBreaking: false,
+  // }
+
+  t.strictEqual(typeof commit, 'object');
+  t.strictEqual(commit.increment, 'minor');
+  t.strictEqual(commit.isBreaking, false);
+  t.strictEqual(commit.header.type, 'feat');
+  t.ok(!commit.header.scope, 'commit.header.scope should be falsey');
+  t.strictEqual(commit.header.subject, 'foo bar baz');
+  t.strictEqual(typeof commit.header.toString, 'function');
+  t.strictEqual(commit.header.toString(), 'feat: foo bar baz');
+  t.strictEqual(commit.body, 'Some multiline body\nAlleluah');
+  t.strictEqual(
     commit.footer,
-    'BREAKING CHANGE: some breaking change.\nThanks @foobar'
-  )
-  test.strictEqual(commit.increment, 'major')
-  done()
-})
+    'So there is some updated things\nfixes #34\nresolves #225',
+  );
+});
 
-test('should .parse throw for invalid commit convention message', (done) => {
-  test.throws(() => parse('foo bar baz'), /invalid commit message/)
-  done()
-})
+test('should have empty body but contain footer', (t) => {
+  const msg = `fix: some non-breaking update
 
-test('do not treat BREAKING CHANGE as major when not at the beginning', (done) => {
-  const commitMessage = 'fix(abc): foo bar BREAKING CHANGE here is not valid'
-  const commit = parse(commitMessage, plugins)
+Only footer
+fixes #33
+`;
+  const commit = parse(msg, plugins);
 
-  test.strictEqual(commit.type, 'fix')
-  test.strictEqual(commit.scope, 'abc')
-  test.strictEqual(commit.subject, 'foo bar BREAKING CHANGE here is not valid')
-  test.strictEqual(commit.increment, 'patch')
-  done()
-})
+  t.ok(!commit.body, 'should have falsey value `body` property');
+  t.ok(!commit.header.scope, 'commit.header.scope should be falsey');
+  t.strictEqual(commit.footer, 'Only footer\nfixes #33');
+  t.strictEqual(commit.increment, 'patch');
+  t.strictEqual(commit.header.toString(), 'fix: some non-breaking update');
+});
+
+test('should have empty body and footer but scope', (t) => {
+  const str = 'break(critical): some breaking with no body';
+  const commit = parse(str, plugins);
+
+  t.ok(!commit.body, 'should have falsey value `body` property');
+  t.ok(!commit.footer, 'commit.footer should be falsey');
+  t.strictEqual(commit.isBreaking, true);
+  t.strictEqual(commit.increment, 'major');
+  t.strictEqual(commit.header.scope, 'critical');
+  t.strictEqual(commit.header.toString(), str);
+});
+
+test('should support and collect all mentions from anywehere', (t) => {
+  const msg = `feat(crit): thanks to @foobar for this release
+
+Also to @barby!
+
+thanks to @hix!
+resolves #123
+`;
+
+  const commit = parse(msg, plugins);
+
+  t.strictEqual(Array.isArray(commit.mentions), true);
+  t.strictEqual(commit.mentions.length, 3);
+
+  t.strictEqual(commit.mentions[0].handle, '@foobar');
+  t.strictEqual(commit.mentions[0].mention, 'foobar');
+  t.strictEqual(commit.mentions[1].handle, '@barby');
+  t.strictEqual(commit.mentions[1].mention, 'barby');
+  t.strictEqual(commit.mentions[2].handle, '@hix');
+  t.strictEqual(commit.mentions[2].mention, 'hix');
+
+  t.strictEqual(commit.header.scope, 'crit');
+  t.strictEqual(commit.increment, 'minor');
+});
+
+test('should .parse throw if no string as first argument', (t) => {
+  t.throws(() => {
+    parse(123);
+  }, /expect `commitMessage` to be string/);
+});
+
+test('should .parse throw for invalid commit convention message', (t) => {
+  t.throws(() => parse('foo bar baz'), /invalid commit message/);
+});
+
+test('do not treat BREAKING CHANGE as major when not at the beginning', (t) => {
+  const commitMessage = 'fix(abc): foo bar BREAKING CHANGE here is not valid';
+  const commit = parse(commitMessage, plugins);
+
+  t.strictEqual(commit.header.type, 'fix');
+  t.strictEqual(commit.header.scope, 'abc');
+  t.strictEqual(
+    commit.header.subject,
+    'foo bar BREAKING CHANGE here is not valid',
+  );
+  t.strictEqual(commit.increment, 'patch');
+});
+
+test('treat `BREAKINGs+CHANGE:s+` as major even if type is `fix`', (t) => {
+  const msg = `fix: huge bug is resolved
+
+BREAKING CHANGE: really big refactor
+
+resolves #2137
+`;
+
+  const commit = parse(msg, mappers.increment);
+
+  t.strictEqual(commit.isBreaking, true);
+  t.strictEqual(commit.increment, 'major');
+  t.strictEqual(commit.body, 'BREAKING CHANGE: really big refactor');
+  t.strictEqual(commit.footer, 'resolves #2137');
+  t.strictEqual(commit.header.type, 'fix');
+  t.strictEqual(commit.header.toString(), 'fix: huge bug is resolved');
+});
