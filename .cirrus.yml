@@ -1,4 +1,4 @@
-test:
+test_task:
   container:
     image: node:latest
   node_modules_cache:
