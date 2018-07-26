@@ -3,20 +3,15 @@ version: 2
 workdir: &workdir
   working_directory: ~/parse-commit-message
 
-node8osx: &node8osx
-  <<: *workdir
-  macos:
-    xcode: "9.2"
+# node8osx: &node8osx
+#   <<: *workdir
+#   macos:
+#     xcode: "9.2"
 
-node10osx: &node10osx
-  <<: *workdir
-  macos:
-    xcode: "9"
-
-node10osx: &node10osx
-  <<: *workdir
-  macos:
-    xcode: "9.4"
+# node10osx: &node10osx
+#   <<: *workdir
+#   macos:
+#     xcode: "9"
 
 node8linux: &node8linux
   <<: *workdir
@@ -65,30 +60,34 @@ jobs:
   install-node8linux:
     <<: *node8linux
     <<: *jobinstall
-  install-node8osx:
-    <<: *node8osx
-    <<: *jobinstall
 
   test-node8linux:
     <<: *node8linux
-    <<: *jobtest
-  test-node8osx:
-    <<: *node8osx
     <<: *jobtest
 
   install-node10linux:
     <<: *node10linux
     <<: *jobinstall
-  install-node10osx:
-    <<: *node10osx
-    <<: *jobinstall
 
   test-node10linux:
     <<: *node10linux
     <<: *jobtest
-  test-node10osx:
-    <<: *node10osx
-    <<: *jobtest
+
+  # install-node8osx:
+  #   <<: *node8osx
+  #   <<: *jobinstall
+
+  # test-node8osx:
+  #   <<: *node8osx
+  #   <<: *jobtest
+
+  # install-node10osx:
+  #   <<: *node10osx
+  #   <<: *jobinstall
+
+  # test-node10osx:
+  #   <<: *node10osx
+  #   <<: *jobtest
 
   release:
     <<: *node10linux
@@ -113,20 +112,21 @@ workflows:
           requires:
             - install-node10linux
       # OSX
-      - install-node8osx
-      - test-node8osx:
-          requires:
-            - install-node8osx
-      - install-node10osx
-      - test-node10osx:
-          requires:
-            - install-node10osx
+      # - install-node8osx
+      # - test-node8osx:
+      #     requires:
+      #       - install-node8osx
+      # - install-node10osx
+      # - test-node10osx:
+      #     requires:
+      #       - install-node10osx
 
       # Release and NPM publish
+      # Executed only on master
       - release:
           requires:
-            - test-node8osx
-            - test-node10osx
+            # - test-node8osx
+            # - test-node10osx
             - test-node8linux
             - test-node10linux
           filters:

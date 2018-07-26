@@ -7,7 +7,7 @@
     "lint": "xaxa",
     "test": "nyc --require esm asia",
     "gitadd": "git status --porcelain && git add -A",
-    "commit-dry": "yarn gitadd && yarn commit",
+    "commit-dry": "yarn gitadd && gitcommit -sS",
     "precommit": "yarn lint && yarn test && yarn gitadd",
     "commit": "gitcommit -sS",
     "prebuild": "rm -rf dist && mkdir dist",
