@@ -1,12 +1,30 @@
 version: 2
 
-node8: &node8
+workdir: &workdir
   working_directory: ~/parse-commit-message
+
+node8osx: &node8osx
+  <<: *workdir
+  macos:
+    xcode: "9.2"
+
+node10osx: &node10osx
+  <<: *workdir
+  macos:
+    xcode: "9"
+
+node10osx: &node10osx
+  <<: *workdir
+  macos:
+    xcode: "9.4"
+
+node8linux: &node8linux
+  <<: *workdir
   docker:
     - image: circleci/node:8
 
-node10: &node10
-  working_directory: ~/parse-commit-message
+node10linux: &node10linux
+  <<: *workdir
   docker:
     - image: circleci/node:10
 
@@ -44,24 +62,36 @@ jobtest: &jobtest
 
 
 jobs:
-  install-on-node8:
-    <<: *node8
+  install-node8linux:
+    <<: *node8linux
+    <<: *jobinstall
+  install-node8osx:
+    <<: *node8osx
     <<: *jobinstall
 
-  test-on-node8:
-    <<: *node8
+  test-node8linux:
+    <<: *node8linux
+    <<: *jobtest
+  test-node8osx:
+    <<: *node8osx
     <<: *jobtest
 
-  install-on-node10:
-    <<: *node10
+  install-node10linux:
+    <<: *node10linux
+    <<: *jobinstall
+  install-node10osx:
+    <<: *node10osx
     <<: *jobinstall
 
-  test-on-node10:
-    <<: *node10
+  test-node10linux:
+    <<: *node10linux
+    <<: *jobtest
+  test-node10osx:
+    <<: *node10osx
     <<: *jobtest
 
   release:
-    <<: *node10
+    <<: *node10linux
     steps:
       - checkout
       - *restore_modules_cache
@@ -73,18 +103,32 @@ workflows:
   version: 2
   automated:
     jobs:
-      - install-on-node8
-      - test-on-node8:
+      # Linux
+      - install-node8linux
+      - test-node8linux:
           requires:
-            - install-on-node8
-      - install-on-node10
-      - test-on-node10:
+            - install-node8linux
+      - install-node10linux
+      - test-node10linux:
           requires:
-            - install-on-node10
+            - install-node10linux
+      # OSX
+      - install-node8osx
+      - test-node8osx:
+          requires:
+            - install-node8osx
+      - install-node10osx
+      - test-node10osx:
+          requires:
+            - install-node10osx
+
+      # Release and NPM publish
       - release:
           requires:
-            - test-on-node8
-            - test-on-node10
+            - test-node8osx
+            - test-node10osx
+            - test-node8linux
+            - test-node10linux
           filters:
             branches:
               only: master
