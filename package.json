@@ -13,8 +13,8 @@
     "commit": "gitcommit -sS",
     "types": "tsc --emitDeclarationOnly --declaration",
     "parcel:cli": "BABEL_ENV=v6 parcel build src/index.ts --no-source-maps --detailed-report --experimental-scope-hoisting",
-    "parcel:umd": "npm run parcel:cli --target browser -d dist/umd --global parseCommitMessage",
-    "parcel:cjs": "npm run parcel:cli --target node -d dist/cjs --no-minify",
+    "parcel:umd": "BABEL_ENV=v6 parcel build src/index.ts --no-source-maps --detailed-report --experimental-scope-hoisting --target browser -d dist/umd --global parseCommitMessage",
+    "parcel:cjs": "BABEL_ENV=v6 parcel build src/index.ts --no-source-maps --detailed-report --experimental-scope-hoisting --target node -d dist/cjs --no-minify",
     "prebuild": "rm -rf dist && npm run types",
     "build": "npm run parcel:umd && npm run parcel:cjs",
     "release": "new-release"
