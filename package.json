@@ -46,7 +46,6 @@
     "xaxa": "^2.0.0"
   },
   "files": [
-    "src",
     "dist"
   ],
   "main": "dist/cjs/index.js",

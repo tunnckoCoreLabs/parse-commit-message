@@ -60,6 +60,9 @@ jobtest: &jobtest
     - run:
         name: Testing your project
         command: npm test
+    - run:
+        name: Bundling your awesome project
+        command: npm run build
     - save_cache:
         key: parse-commit-message-{{ checksum "shrinkwrap.yaml" }}
         paths: node_modules
@@ -106,9 +109,9 @@ jobs:
     steps:
       - checkout
       - *restore_modules_cache
-    - run:
-        name: Bundling your awesome project
-        command: npm run build
+      - run:
+          name: Bundling your awesome project
+          command: npm run build
       - run:
           name: Releasing and publishing
           command: npm run release
