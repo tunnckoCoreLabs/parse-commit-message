@@ -26,48 +26,63 @@ node10linux: &node10linux
 restore_modules_cache: &restore_modules_cache
   restore_cache:
     keys:
-    - parse-commit-message-{{ checksum "yarn.lock" }}
+    - parse-commit-message-{{ checksum "shrinkwrap.yaml" }}
     # fallback to using the latest cache if no exact match is found
     - parse-commit-message-
 
-jobinstall: &jobinstall
-  steps:
-    - checkout
-    - *restore_modules_cache
-    - run:
-        name: Installing Dependencies
-        command: yarn install
-    - save_cache:
-        key: parse-commit-message-{{ checksum "yarn.lock" }}
-        paths: node_modules
-    - run:
-        name: Remove node_modules to cleanup workspace
-        command: rm -rf node_modules
+# jobinstall: &jobinstall
+#   steps:
+#     - checkout
+#     # - *restore_modules_cache
+#     - run:
+#         name: Installing PNPM package manager
+#         command: sudo npm i -g pnpm
+#     - run:
+#         name: Installing project dependencies
+#         command: pnpm run inst
+#     - save_cache:
+#         key: parse-commit-message-{{ checksum "shrinkwrap.yaml" }}
+#         paths: node_modules
+#     - run:
+#         name: Remove node_modules to cleanup workspace
+#         command: rm -rf node_modules
 
 jobtest: &jobtest
   steps:
     - checkout
     - *restore_modules_cache
     - run:
-        name: Running tests and checks
-        command: yarn test
+        name: Installing PNPM package manager
+        command: npm i --no-save pnpm
+    - run:
+        name: Installing project dependencies
+        command: npm run inst
+    - run:
+        name: Testing your project
+        command: npm test
+    - run:
+        name: Bundling your awesome project
+        command: npm run build
+    - save_cache:
+        key: parse-commit-message-{{ checksum "shrinkwrap.yaml" }}
+        paths: node_modules
     - run:
         name: Sending test coverage to CodeCov
         command: bash <(curl -s https://codecov.io/bash)
 
 
 jobs:
-  install-node8linux:
-    <<: *node8linux
-    <<: *jobinstall
+  # install-node8linux:
+  #   <<: *node8linux
+  #   <<: *jobinstall
 
   test-node8linux:
     <<: *node8linux
     <<: *jobtest
 
-  install-node10linux:
-    <<: *node10linux
-    <<: *jobinstall
+  # install-node10linux:
+    # <<: *node10linux
+    # <<: *jobinstall
 
   test-node10linux:
     <<: *node10linux
@@ -96,21 +111,24 @@ jobs:
       - *restore_modules_cache
       - run:
           name: Releasing and publishing
-          command: yarn new-release
+          command: npm run release
 
 workflows:
   version: 2
   automated:
     jobs:
       # Linux
-      - install-node8linux
-      - test-node8linux:
-          requires:
-            - install-node8linux
-      - install-node10linux
-      - test-node10linux:
-          requires:
-            - install-node10linux
+      - test-node8linux
+      - test-node10linux
+
+      # - install-node8linux
+      # - test-node8linux:
+      #     requires:
+      #       - install-node8linux
+      # - install-node10linux
+      # - test-node10linux:
+      #     requires:
+      #       - install-node10linux
       # OSX
       # - install-node8osx
       # - test-node8osx:

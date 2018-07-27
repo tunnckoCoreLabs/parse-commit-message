@@ -17,7 +17,7 @@ fixes #34
 resolves #225
 `;
 
-  const commit = parse(msg, plugins);
+  const commit = parse(msg);
   // => {
   //   header: {
   //     type: 'feat',
@@ -32,6 +32,7 @@ resolves #225
   // }
 
   t.strictEqual(typeof commit, 'object');
+  t.ok(commit.mentions);
   t.strictEqual(commit.increment, 'minor');
   t.strictEqual(commit.isBreaking, false);
   t.strictEqual(commit.header.type, 'feat');
@@ -52,8 +53,7 @@ test('should have empty body but contain footer', (t) => {
 Only footer
 fixes #33
 `;
-  const commit = parse(msg, plugins);
-
+  const commit = parse(msg, mappers.increment);
   t.ok(!commit.body, 'should have falsey value `body` property');
   t.ok(!commit.header.scope, 'commit.header.scope should be falsey');
   t.strictEqual(commit.footer, 'Only footer\nfixes #33');
@@ -63,7 +63,7 @@ fixes #33
 
 test('should have empty body and footer but scope', (t) => {
   const str = 'break(critical): some breaking with no body';
-  const commit = parse(str, plugins);
+  const commit = parse(str, mappers.increment);
 
   t.ok(!commit.body, 'should have falsey value `body` property');
   t.ok(!commit.footer, 'commit.footer should be falsey');
@@ -85,14 +85,17 @@ resolves #123
   const commit = parse(msg, plugins);
 
   t.strictEqual(Array.isArray(commit.mentions), true);
-  t.strictEqual(commit.mentions.length, 3);
 
-  t.strictEqual(commit.mentions[0].handle, '@foobar');
-  t.strictEqual(commit.mentions[0].mention, 'foobar');
-  t.strictEqual(commit.mentions[1].handle, '@barby');
-  t.strictEqual(commit.mentions[1].mention, 'barby');
-  t.strictEqual(commit.mentions[2].handle, '@hix');
-  t.strictEqual(commit.mentions[2].mention, 'hix');
+  // strong type sometimes sucks?
+  const mentions = commit.mentions || [];
+
+  t.strictEqual(mentions.length, 3);
+  t.strictEqual(mentions[0].handle, '@foobar');
+  t.strictEqual(mentions[0].mention, 'foobar');
+  t.strictEqual(mentions[1].handle, '@barby');
+  t.strictEqual(mentions[1].mention, 'barby');
+  t.strictEqual(mentions[2].handle, '@hix');
+  t.strictEqual(mentions[2].mention, 'hix');
 
   t.strictEqual(commit.header.scope, 'crit');
   t.strictEqual(commit.increment, 'minor');
@@ -100,6 +103,7 @@ resolves #123
 
 test('should .parse throw if no string as first argument', (t) => {
   t.throws(() => {
+    // @ts-ignore
     parse(123);
   }, /expect `commitMessage` to be string/);
 });
@@ -110,7 +114,7 @@ test('should .parse throw for invalid commit convention message', (t) => {
 
 test('do not treat BREAKING CHANGE as major when not at the beginning', (t) => {
   const commitMessage = 'fix(abc): foo bar BREAKING CHANGE here is not valid';
-  const commit = parse(commitMessage, plugins);
+  const commit = parse(commitMessage, mappers.increment);
 
   t.strictEqual(commit.header.type, 'fix');
   t.strictEqual(commit.header.scope, 'abc');

@@ -4,38 +4,54 @@
   "license": "Apache-2.0",
   "licenseStart": "2017",
   "scripts": {
-    "lint": "xaxa",
-    "test": "nyc --require esm asia",
+    "inst": "pnpm i --side-effects-cache-readonly --shamefully-flatten --prefer-offline --prefer-frozen-shrinkwrap",
+    "lint": "eslint '**/*.ts' --fix --format codeframe",
+    "test": "BABEL_ENV=v7 nyc --require ./babel-register-ts asia 'test/**/*.ts'",
     "gitadd": "git status --porcelain && git add -A",
-    "commit-dry": "yarn gitadd && gitcommit -sS",
-    "precommit": "yarn lint && yarn test && yarn gitadd",
+    "commit-dry": "npm run gitadd && gitcommit -sS",
+    "precommit": "npm run lint && npm test && npm run gitadd",
     "commit": "gitcommit -sS",
-    "prebuild": "rm -rf dist && mkdir dist",
-    "build": "ascjs src dist",
-    "prepublishOnly": "yarn build"
+    "types": "tsc --emitDeclarationOnly --declaration",
+    "parcel:cli": "BABEL_ENV=v6 parcel build src/index.ts --no-source-maps --detailed-report --experimental-scope-hoisting",
+    "parcel:umd": "npm run parcel:cli --target browser -d dist/umd --global parseCommitMessage",
+    "parcel:cjs": "npm run parcel:cli --target node -d dist/cjs --no-minify",
+    "prebuild": "rm -rf dist && npm run types",
+    "build": "npm run parcel:umd && npm run parcel:cjs",
+    "release": "new-release"
   },
   "engines": {
-    "node": "^6.9.0 || ^8.9.0 || ^10.6.0"
+    "node": "^8.9.0 || ^10.6.0"
   },
   "dependencies": {
-    "arrayify": "^1.0.0",
     "collect-mentions": "^1.0.1"
   },
   "devDependencies": {
-    "ascjs": "^2.4.0",
+    "@babel/core": "^7.0.0-beta.54",
+    "@babel/preset-env": "^7.0.0-beta.54",
+    "@babel/preset-stage-3": "^7.0.0-beta.54",
+    "@babel/preset-typescript": "^7.0.0-beta.54",
+    "@babel/register": "^7.0.0-beta.54",
+    "@types/node": "^10.5.3",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-flow": "^6.23.0",
+    "babel-preset-stage-3": "^6.24.1",
+    "babel-register": "^6.26.0",
     "asia": "^0.19.7",
-    "esm": "^3.0.72",
     "gitcommit": "^1.0.8",
     "new-release": "^4.0.3",
     "nyc": "^12.0.2",
+    "parcel-bundler": "^1.9.7",
+    "typescript": "^2.9.2",
     "xaxa": "^2.0.0"
   },
   "files": [
     "src",
     "dist"
   ],
-  "main": "dist/index.js",
-  "module": "src/index.js",
+  "main": "dist/cjs/index.js",
+  "unpkg": "dist/umd/index.js",
+  "typings": "dist/typings/index.d.ts",
   "version": "0.0.0-semantically-released",
   "repository": "olstenlarck/parse-commit-message",
   "homepage": "https://github.com/olstenlarck/parse-commit-message",
@@ -44,16 +60,29 @@
     "access": "public"
   },
   "eslintConfig": {
-    "extends": "xaxa"
+    "extends": "xaxa",
+    "settings": {
+      "import/resolver": {
+        "node": {
+          "extensions": [
+            ".mjs",
+            ".js",
+            ".jsx",
+            ".ts",
+            ".tsx"
+          ]
+        }
+      }
+    }
   },
   "renovate": {
     "extends": "tunnckocore"
   },
   "nyc": {
-    "statements": 0,
-    "functions": 0,
-    "branches": 0,
-    "lines": 0,
+    "statements": 100,
+    "functions": 100,
+    "branches": 100,
+    "lines": 100,
     "cache": true,
     "check-coverage": true,
     "reporter": [
@@ -61,11 +90,15 @@
       "text"
     ],
     "exclude": [
-      "test"
+      "node_modules",
+      "test",
+      "babel-register*"
     ],
     "extension": [
       ".js",
+      ".ts",
       ".jsx",
+      ".tsx",
       ".mjs"
     ]
   },

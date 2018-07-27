@@ -1,0 +1,8 @@
+node_modules
+coverage
+.nyc_output
+.eslintcache
+.cache
+dist
+parse-commit-message
+*.d.ts
