@@ -32,7 +32,7 @@
   "main": "index.js",
   "module": "src/index.js",
   "typings": "src/index.d.ts",
-  "version": "3.0.0-next.rc2",
+  "version": "3.0.0-next.rc3",
   "repository": "tunnckoCoreLabs/parse-commit-message",
   "homepage": "https://github.com/tunnckoCoreLabs/parse-commit-message",
   "author": "Charlike Mike Reagent (https://tunnckocore.com)",
