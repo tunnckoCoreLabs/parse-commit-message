@@ -1,0 +1,27 @@
+{
+  "projectName": "parse-commit-message",
+  "projectOwner": "tunnckoCoreLabs",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 120,
+  "commit": false,
+  "contributorsPerLine": 6,
+  "contributors": [
+    {
+      "login": "tunnckoCore",
+      "name": "Charlike Mike Reagent",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/5038030?v=4",
+      "profile": "https://tunnckocore.com",
+      "contributions": [
+        "code",
+        "doc",
+        "question",
+        "review",
+        "fundingFinding"
+      ]
+    }
+  ]
+}
