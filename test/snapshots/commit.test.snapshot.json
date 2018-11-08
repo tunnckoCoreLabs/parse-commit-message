@@ -1,1 +1,0 @@
-{"commit: basic":{"skip":false,"todo":false,"run":false,"isPending":false,"isRejected":false,"isFulfilled":true,"id":1,"str":"(t) => {\n  t.strictEqual(typeof parseCommit, 'function');\n  t.strictEqual(typeof stringifyCommit, 'function');\n  t.strictEqual(typeof validateCommit, 'function');\n  t.strictEqual(typeof checkCommit, 'function');\n}","title":"commit: basic"}}

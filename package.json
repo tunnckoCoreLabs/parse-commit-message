@@ -2,7 +2,7 @@
   "name": "parse-commit-message",
   "description": "Extensible parser for git commit messages following Conventional Commits Specification",
   "license": "Apache-2.0",
-  "licenseStart": "2018",
+  "licenseStart": "2017",
   "scripts": {
     "docs": "docks --outfile .verb.md && verb",
     "lint": "eslint '**/*.js' --cache --fix --quiet --format codeframe",

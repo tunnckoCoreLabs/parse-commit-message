@@ -433,7 +433,7 @@ Consider showing your [support](#support-the-project) to them. :sparkling_heart:
 
 ## License
 
-Copyright (c) 2018-present, [Charlike Mike Reagent](https://tunnckocore.com) `<mameto2011@gmail.com>` & [contributors](#wonderful-contributors).  
+Copyright (c) 2017-present, [Charlike Mike Reagent](https://tunnckocore.com) `<mameto2011@gmail.com>` & [contributors](#wonderful-contributors).  
 Released under the [Apache-2.0 License][license-url].
 
 <!-- Heading badges -->

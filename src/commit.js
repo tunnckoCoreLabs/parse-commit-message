@@ -69,9 +69,8 @@ export function validateCommit(commit, ret = false) {
  */
 export function checkCommit(commit) {
   if (!commit || (commit && typeof commit !== 'object')) {
-    const type = `{ header: { type: string, scope?: string, subject: scope }, body?, footer? }`;
-
-    throw new TypeError(`expect \`commit\` to be an object: ${type}`);
+    const msg = `{ header: { type: string, scope?: string, subject: scope }, body?, footer? }`;
+    throw new TypeError(`expect \`commit\` to be an object: ${msg}`);
   }
 
   const { error, value: header } = validateHeader(commit, true);

@@ -79,8 +79,8 @@ export function validateHeader(header, ret = false) {
  */
 export function checkHeader(header) {
   if (!header || (header && typeof header !== 'object')) {
-    const type = `{ type: string, scope?: string, subject: scope }`;
-    throw new TypeError(`expect \`commit.header\` to be an object: ${type}`);
+    const msg = `{ type: string, scope?: string, subject: scope }`;
+    throw new TypeError(`expect \`commit.header\` to be an object: ${msg}`);
   }
 
   const schema = joi.object().keys({
