@@ -16,10 +16,13 @@ import { parseHeader, stringifyHeader, validateHeader } from './header';
  * @public
  */
 export function parseCommit(commit) {
-  const { error, value: header } = parseHeader(commit);
-  if (error) throw error;
+  if (!commit || (commit && typeof commit !== 'string')) {
+    const msg = `{ header: { type: string, scope?: string, subject: scope }, body?, footer? }`;
+    throw new TypeError(`expect \`commit\` to be an object: ${msg}`);
+  }
 
-  const [body = '', footer = ''] = commit.split('\n\n').slice(1);
+  const header = parseHeader(commit);
+  const [body, footer] = commit.split('\n\n').slice(1);
 
   return { header, body, footer };
 }
@@ -34,7 +37,7 @@ export function parseCommit(commit) {
  * @public
  */
 export function stringifyCommit(commit) {
-  const result = validateCommit(commit);
+  const result = validateCommit(commit, true);
   if (result.error) {
     throw result.error;
   }
@@ -89,5 +92,8 @@ export function checkCommit(commit) {
     result.error.message = `parse-commit-message: ${result.error.message}`;
     throw result.error;
   }
+
+  // hack
+  result.value.header.scope = result.value.header.scope || '';
   return result.value;
 }

@@ -24,13 +24,17 @@ export function parseHeader(header) {
     throw new TypeError(errorMsg);
   }
 
+  const parts = header.split('\n');
+  // eslint-disable-next-line no-param-reassign
+  header = parts.length > 0 ? parts[0] : header;
+
   // because the last question mark, which we totally need
   // eslint-disable-next-line unicorn/no-unsafe-regex
   const regex = /^(\w+)(?:\((.+)\))?: (.+)$/;
   if (!regex.test(header)) {
     throw new TypeError(errorMsg);
   }
-  const [type, scope = '', subject] = regex.exec(header).slice(1);
+  const [type, scope, subject] = regex.exec(header).slice(1);
 
   return { type, scope, subject };
 }
@@ -78,16 +82,19 @@ export function validateHeader(header, ret = false) {
  * @public
  */
 export function checkHeader(header) {
+  // eslint-disable-next-line no-param-reassign
+  header = header.header || header;
+
   if (!header || (header && typeof header !== 'object')) {
     const msg = `{ type: string, scope?: string, subject: scope }`;
     throw new TypeError(`expect \`commit.header\` to be an object: ${msg}`);
   }
 
-  const schema = joi.object().keys({
+  const schema = {
     type: isRequired,
     scope: isOptional,
     subject: isRequired,
-  });
+  };
 
   const result = joi.validate(header, schema);
   if (result.error) {
