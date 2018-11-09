@@ -40,6 +40,10 @@ Project is [semantically](https://semver.org) & automatically released on [Circl
 ## Table of Contents
 
 - [Install](#install)
+- [Type definitions](#type-definitions)
+  * [Header](#header)
+  * [Commit](#commit)
+  * [Mention](#mention)
 - [API](#api)
   * [src/commit.js](#srccommitjs)
     + [.parseCommit](#parsecommit)
@@ -84,6 +88,55 @@ _We highly recommend to use Yarn when you think to contribute to this project._
 $ yarn add parse-commit-message
 ```
 
+## Type definitions
+
+For TypeScript support, please consider sending a PR here (adding `src/index.d.ts`)
+or inform us when you PR to the DefinitelyTyped.
+
+For FlowType support, PR adding `.js.flow` files in the `src/` for every respective file.
+
+### Header
+
+```ts
+type Header = {
+  type: string;
+  scope?: string;
+  subject: string;
+};
+```
+
+The `scope` may exist or not. When exist it should be non-empty string.
+
+### Commit
+
+```ts
+type Commit = {
+  header: Header;
+  body?: string;
+  footer?: string;
+  increment?: string;
+  isBreaking?: boolean;
+  mentions?: Array<Mention>;
+};
+```
+
+Note: It may also include properties set by the plugins - the `isBreaking`, `increment` and `mentions` 
+are such. They are there when you apply the `increment` and `mentions` plugins.
+
+See [.applyPlugins](#applyplugins) and [.plugins](#plugins).
+
+### Mention
+
+```ts
+type Mention = {
+  handle: string;
+  mention: string;
+  index: number;
+};
+```
+
+See [collect-mentions][] for more.
+
 ## API
 
 <!-- docks-start -->
@@ -103,31 +156,31 @@ or to `validateCommit` with `ret` option set to `true`._
 - `commit` **{string}** a message like `'fix(foo): bar baz\n\nSome awesome body!'`
 
 **Returns**
-- `Commit` a standard object like `{ header: HeaderObject, body, footer }`
+- `Commit` a standard object like `{ header: Header, body, footer }`
 
-#### [.stringifyCommit](/src/commit.js#L36)
+#### [.stringifyCommit](/src/commit.js#L39)
 Receives a `Commit` object, validates it using `validateCommit`,
 builds a "commit" string and returns it.
 
 **Params**
-- `header` **{Commit}** a `Commit` object like `{ header: HeaderObject, body, footer }`
+- `header` **{Commit}** a `Commit` object like `{ header: Header, body, footer }`
 
 **Returns**
 - `string` a commit nessage stirng like `'fix(foo): bar baz'`
 
-#### [.validateCommit](/src/commit.js#L58)
+#### [.validateCommit](/src/commit.js#L61)
 Validates given `Commit` object and returns `boolean`.
 You may want to set `ret` to `true` return an object instead of throwing.
 
 **Params**
-- `header` **{Commit}** a `Commit` like `{ header: HeaderObject, body, footer }`
+- `header` **{Commit}** a `Commit` like `{ header: Header, body, footer }`
 - `[ret]` **{boolean}** to return result instead of throwing, default `false`
 
 **Returns**
 - `undefined` if `ret` is `true` then returns `{ value, error }` object,
                          where `value` is `Commit` and `error` a standard `Error`
 
-#### [.checkCommit](/src/commit.js#L70)
+#### [.checkCommit](/src/commit.js#L73)
 Receives a `Commit` and checks if it is valid.
 
 **Params**
@@ -149,38 +202,38 @@ or to `validateHeader` with `ret` option set to `true`._
 - `header` **{string}** a header stirng like `'fix(foo): bar baz'`
 
 **Returns**
-- `HeaderObject` a `HeaderObject` like `{ type, scope?, subject }`
+- `Header` a `Header` object like `{ type, scope?, subject }`
 
-#### [.stringifyHeader](/src/header.js#L47)
+#### [.stringifyHeader](/src/header.js#L51)
 Receives a `header` object, validates it using `validateHeader`,
 builds a "header" string and returns it.
 
 **Params**
-- `header` **{HeaderObject}** a `HeaderObject` like `{ type, scope?, subject }`
+- `header` **{Header}** a `Header` object like `{ type, scope?, subject }`
 
 **Returns**
 - `string` a header stirng like `'fix(foo): bar baz'`
 
-#### [.validateHeader](/src/header.js#L68)
+#### [.validateHeader](/src/header.js#L72)
 Validates given `header` object and returns `boolean`.
 You may want to pass `ret` to return an object instead of throwing.
 
 **Params**
-- `header` **{HeaderObject}** a `HeaderObject` like `{ type, scope?, subject }`
+- `header` **{Header}** a `Header` object like `{ type, scope?, subject }`
 - `[ret]` **{boolean}** to return result instead of throwing, default `false`
 
 **Returns**
 - `undefined` if `ret` is `true` then returns `{ value, error }` object,
-                         where `value` is `HeaderObject` and `error` a standard `Error`
+                         where `value` is `Header` and `error` a standard `Error`
 
-#### [.checkHeader](/src/header.js#L80)
-Receives a `HeaderObject` and checks if it is valid.
+#### [.checkHeader](/src/header.js#L84)
+Receives a `Header` and checks if it is valid.
 
 **Params**
-- `header` **{HeaderObject}** a `HeaderObject` like `{ type, scope?, subject }`
+- `header` **{Header}** a `Header` object like `{ type, scope?, subject }`
 
 **Returns**
-- `HeaderObject` returns the same as given if no problems, otherwise it will throw.
+- `Header` returns the same as given if no problems, otherwise it will throw.
 
 ### [src/index.js](/src/index.js)
 
@@ -322,7 +375,7 @@ You may want to pass `ret` to return an object instead of throwing.
 
 **Returns**
 - `undefined` if `ret` is `true` then returns `{ value, error }` object,
-                         where `value` is `Commit|Commit[]
+                         where `value` is `Commit|Array<Commit>` and `error` a standard `Error`
 
 #### [.check](/src/main.js#L83)
 Receives a single or multiple commit message(s) in form of string,
@@ -366,7 +419,7 @@ _See the [.plugins](#plugins) and [.mappers](#mappers)  examples._
 - `commit` **{Commit}** a standard `Commit` object
 
 **Returns**
-- `Commit` plus `{ mentions: Array<Object> }`
+- `Commit` plus `{ mentions: Array<Mention> }`
 
 <!-- docks-end -->
 
@@ -382,7 +435,7 @@ existance!
 - [@tunnckocore/scripts](https://www.npmjs.com/package/@tunnckocore/scripts): Universal and minimalist scripts & tasks runner. | [homepage](https://github.com/tunnckoCoreLabs/scripts "Universal and minimalist scripts & tasks runner.")
 - [@tunnckocore/update](https://www.npmjs.com/package/@tunnckocore/update): Update a repository with latest templates from `charlike`. | [homepage](https://github.com/tunnckoCoreLabs/update "Update a repository with latest templates from `charlike`.")
 - [asia](https://www.npmjs.com/package/asia): Blazingly fast, magical and minimalist testing framework, for Today and Tomorrow | [homepage](https://github.com/olstenlarck/asia#readme "Blazingly fast, magical and minimalist testing framework, for Today and Tomorrow")
-- [charlike](https://www.npmjs.com/package/charlike): Small & fast project scaffolder with sane defaults. Supports hundreds of template… [more](https://github.com/tunnckoCoreLabs/charlike) | [homepage](https://github.com/tunnckoCoreLabs/charlike "Small & fast project scaffolder with sane defaults. Supports hundreds of template engines through the @JSTransformers API or if you want custom `render` function passed through options")
+- [charlike](https://www.npmjs.com/package/charlike): Small, fast and streaming project scaffolder with support for hundreds of template… [more](https://github.com/tunnckoCoreLabs/charlike) | [homepage](https://github.com/tunnckoCoreLabs/charlike "Small, fast and streaming project scaffolder with support for hundreds of template engines and sane defaults")
 - [docks](https://www.npmjs.com/package/docks): Extensible system for parsing and generating documentation. It just freaking works! | [homepage](https://github.com/tunnckoCore/docks "Extensible system for parsing and generating documentation. It just freaking works!")
 - [gitcommit](https://www.npmjs.com/package/gitcommit): Lightweight and joyful `git commit` replacement. Conventional Commits compliant. | [homepage](https://github.com/tunnckoCore/gitcommit "Lightweight and joyful `git commit` replacement. Conventional Commits compliant.")
 

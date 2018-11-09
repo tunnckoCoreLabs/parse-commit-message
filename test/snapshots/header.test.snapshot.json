@@ -1,0 +1,1 @@
+{"header: basic":{"skip":false,"todo":false,"run":false,"isPending":false,"isRejected":false,"isFulfilled":true,"id":1,"str":"(t) => {\n  t.strictEqual(typeof parseHeader, 'function');\n  t.strictEqual(typeof stringifyHeader, 'function');\n  t.strictEqual(typeof validateHeader, 'function');\n  t.strictEqual(typeof checkHeader, 'function');\n}","title":"header: basic"}}

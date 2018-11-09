@@ -11,7 +11,7 @@ import getMentions from 'collect-mentions';
  *
  * @name  mentions
  * @param {Commit} commit a standard `Commit` object
- * @returns {Commit} plus `{ mentions: Array<Object> }`
+ * @returns {Commit} plus `{ mentions: Array<Mention> }`
  * @public
  */
 export default function mentions(commit) {

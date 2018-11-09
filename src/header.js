@@ -10,7 +10,7 @@ import { tryCatch, isRequired, isOptional, errorMsg } from './utils';
  *
  * @name  .parseHeader
  * @param {string} header a header stirng like `'fix(foo): bar baz'`
- * @returns {HeaderObject} a `HeaderObject` like `{ type, scope?, subject }`
+ * @returns {Header} a `Header` object like `{ type, scope?, subject }`
  * @public
  */
 export function parseHeader(header) {
@@ -44,7 +44,7 @@ export function parseHeader(header) {
  * builds a "header" string and returns it.
  *
  * @name  .stringifyHeader
- * @param {HeaderObject} header a `HeaderObject` like `{ type, scope?, subject }`
+ * @param {Header} header a `Header` object like `{ type, scope?, subject }`
  * @returns {string} a header stirng like `'fix(foo): bar baz'`
  * @public
  */
@@ -63,10 +63,10 @@ export function stringifyHeader(header) {
  * You may want to pass `ret` to return an object instead of throwing.
  *
  * @name  .validateHeader
- * @param {HeaderObject} header a `HeaderObject` like `{ type, scope?, subject }`
+ * @param {Header} header a `Header` object like `{ type, scope?, subject }`
  * @param {boolean} [ret] to return result instead of throwing, default `false`
  * @returns {boolean|object} if `ret` is `true` then returns `{ value, error }` object,
- *                          where `value` is `HeaderObject` and `error` a standard `Error`
+ *                          where `value` is `Header` and `error` a standard `Error`
  * @public
  */
 export function validateHeader(header, ret = false) {
@@ -74,11 +74,11 @@ export function validateHeader(header, ret = false) {
 }
 
 /**
- * Receives a `HeaderObject` and checks if it is valid.
+ * Receives a `Header` and checks if it is valid.
  *
  * @name  .checkHeader
- * @param {HeaderObject} header a `HeaderObject` like `{ type, scope?, subject }`
- * @returns {HeaderObject} returns the same as given if no problems, otherwise it will throw.
+ * @param {Header} header a `Header` object like `{ type, scope?, subject }`
+ * @returns {Header} returns the same as given if no problems, otherwise it will throw.
  * @public
  */
 export function checkHeader(header) {

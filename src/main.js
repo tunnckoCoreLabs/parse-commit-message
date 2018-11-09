@@ -12,7 +12,7 @@ import { parseCommit, stringifyCommit, checkCommit } from './commit';
  * @name  .parse
  * @param {string|object|array} commits a value to be parsed into an object like `Commit` type
  * @param {boolean} [flat] if the returned result length is 1, then returns the first item
- * @returns {Commit[]} if `flat` is true, returns a `Commit`
+ * @returns {Array<Commit>} if `flat` is true, returns a `Commit`
  * @public
  */
 export function parse(commits, flat = false) {
@@ -62,7 +62,7 @@ export function stringify(commit) {
  * @param {string|object|array} commits a value to be parsed & validated into an object like `Commit` type
  * @param {boolean} [ret] to return result instead of throwing, default `false`
  * @returns {boolean|object} if `ret` is `true` then returns `{ value, error }` object,
- *                          where `value` is `Commit|Commit[]` and `error` a standard `Error`
+ *                          where `value` is `Commit|Array<Commit>` and `error` a standard `Error`
  * @public
  */
 export function validate(commits, ret = false) {
@@ -76,7 +76,7 @@ export function validate(commits, ret = false) {
  * @name  .check
  * @param {string|object|array} commits a value to be parsed & validated into an object like `Commit` type
  * @param {boolean} [flat] if the returned result length is 1, then returns the first item
- * @returns {Commit[]} returns the same as given if no problems, otherwise it will throw;
+ * @returns {Array<Commit>} returns the same as given if no problems, otherwise it will throw;
  *                     if `flat: true`, returns a `Commit`
  * @public
  */

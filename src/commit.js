@@ -12,7 +12,7 @@ import { parseHeader, stringifyHeader, validateHeader } from './header';
  *
  * @name  .parseCommit
  * @param {string} commit a message like `'fix(foo): bar baz\n\nSome awesome body!'`
- * @returns {Commit} a standard object like `{ header: HeaderObject, body, footer }`
+ * @returns {Commit} a standard object like `{ header: Header, body, footer }`
  * @public
  */
 export function parseCommit(commit) {
@@ -32,7 +32,7 @@ export function parseCommit(commit) {
  * builds a "commit" string and returns it.
  *
  * @name  .stringifyCommit
- * @param {Commit} header a `Commit` object like `{ header: HeaderObject, body, footer }`
+ * @param {Commit} header a `Commit` object like `{ header: Header, body, footer }`
  * @returns {string} a commit nessage stirng like `'fix(foo): bar baz'`
  * @public
  */
@@ -52,7 +52,7 @@ export function stringifyCommit(commit) {
  * You may want to set `ret` to `true` return an object instead of throwing.
  *
  * @name  .validateCommit
- * @param {Commit} header a `Commit` like `{ header: HeaderObject, body, footer }`
+ * @param {Commit} header a `Commit` like `{ header: Header, body, footer }`
  * @param {boolean} [ret] to return result instead of throwing, default `false`
  * @returns {boolean|object} if `ret` is `true` then returns `{ value, error }` object,
  *                          where `value` is `Commit` and `error` a standard `Error`
