@@ -25,7 +25,7 @@ For bugs reports and feature requests, [please create an issue][open-issue-url] 
 [![NPM Downloads Total][downloads-total-img]][npmv-url]
 [![Share Love Tweet][shareb]][shareu]
 
-Project is [semantically](https://semver.org) & automatically released on [CircleCI](https://circleci.com) with [new-release][] and its [New Release](https://github.com/apps/new-release) GitHub App.
+Project is [semantically](https://semver.org) & automatically released on [CircleCI](https://circleci.com) with [@tunnckocore/release-cli](https://github.com/tunnckoCore/release-cli) and its [@tunnckocore/release](https://github.com/apps/tunnckocore-release) GitHub App.
 
 <!-- Logo when needed:
 
@@ -144,57 +144,57 @@ _Generated using [docks](http://npm.im/docks)._
 
 ### [src/commit.js](/src/commit.js)
 
-#### [.parseCommit](/src/commit.js#L18)
+#### [.parseCommit](/src/commit.js#L17)
 Receives a full commit message `string` and parses it into an `Commit` object
 and returns it.
 
-_The `parse*` methods are not doing checking and validation,
-so you may want to pass the result to `validateCommit` or `checkCommit`,
-or to `validateCommit` with `ret` option set to `true`._
+_The `parse*` methods are not doing any checking and validation,
+so you may want to pass the result to `validateHeader` or `checkHeader`,
+or to `validateHeader` with `ret` option set to `true`._
 
 **Params**
 - `commit` **{string}** a message like `'fix(foo): bar baz\n\nSome awesome body!'`
 
 **Returns**
-- `Commit` a standard object like `{ header: Header, body, footer }`
+- `Commit` a standard object like `{ header: Header, body?, footer? }`
 
-#### [.stringifyCommit](/src/commit.js#L39)
+#### [.stringifyCommit](/src/commit.js#L37)
 Receives a `Commit` object, validates it using `validateCommit`,
 builds a "commit" string and returns it.
 
 **Params**
-- `header` **{Commit}** a `Commit` object like `{ header: Header, body, footer }`
+- `header` **{Commit}** a `Commit` object like `{ header: Header, body?, footer? }`
 
 **Returns**
 - `string` a commit nessage stirng like `'fix(foo): bar baz'`
 
-#### [.validateCommit](/src/commit.js#L61)
+#### [.validateCommit](/src/commit.js#L59)
 Validates given `Commit` object and returns `boolean`.
 You may want to set `ret` to `true` return an object instead of throwing.
 
 **Params**
-- `header` **{Commit}** a `Commit` like `{ header: Header, body, footer }`
+- `header` **{Commit}** a `Commit` like `{ header: Header, body?, footer? }`
 - `[ret]` **{boolean}** to return result instead of throwing, default `false`
 
 **Returns**
 - `undefined` if `ret` is `true` then returns `{ value, error }` object,
                          where `value` is `Commit` and `error` a standard `Error`
 
-#### [.checkCommit](/src/commit.js#L73)
+#### [.checkCommit](/src/commit.js#L72)
 Receives a `Commit` and checks if it is valid.
 
 **Params**
-- `header` **{Commit}** a `Commit` like `{ type, scope?, subject }`
+- `header` **{Commit}** a `Commit` like `{ header: Header, body?, footer? }`
 
 **Returns**
 - `Commit` returns the same as given if no problems, otherwise it will throw.
 
 ### [src/header.js](/src/header.js)
 
-#### [.parseHeader](/src/header.js#L16)
+#### [.parseHeader](/src/header.js#L15)
 Parses given `header` string into an header object.
 
-_The `parse*` methods are not doing checking and validation,
+_The `parse*` methods are not doing any checking and validation,
 so you may want to pass the result to `validateHeader` or `checkHeader`,
 or to `validateHeader` with `ret` option set to `true`._
 
@@ -204,7 +204,7 @@ or to `validateHeader` with `ret` option set to `true`._
 **Returns**
 - `Header` a `Header` object like `{ type, scope?, subject }`
 
-#### [.stringifyHeader](/src/header.js#L51)
+#### [.stringifyHeader](/src/header.js#L49)
 Receives a `header` object, validates it using `validateHeader`,
 builds a "header" string and returns it.
 
@@ -339,30 +339,32 @@ console.log(commit)
 
 ### [src/main.js](/src/main.js)
 
-#### [.parse](/src/main.js#L18)
+#### [.parse](/src/main.js#L14)
 Receives and parses a single or multiple commit message(s) in form of string,
 object, array of strings, array of objects or mixed.
-
-_The `parse*` methods are not doing checking and validation,
-so you may want to pass the result to `validate` or `check`,
-or to `validate` with `ret` option set to `true`._
 
 **Params**
 - `commits` **{string|object|array}** a value to be parsed into an object like `Commit` type
 - `[flat]` **{boolean}** if the returned result length is 1, then returns the first item
 
 **Returns**
-- `Array<Commit>` if `flat` is true, returns a `Commit`
+- `Array<Commit>` if `flat: true`, returns a `Commit`
 
-#### [.stringify](/src/main.js#L43)
+#### [.stringify](/src/main.js#L47)
 Receives a `Commit` object, validates it using `validate`,
 builds a "commit" message string and returns it.
 
+This method does checking and validation too,
+so if you pass a string, it will be parsed and validated,
+and after that turned again to string.
+
 **Params**
-- `commit` **{Commit}** a `Commit` object
+- `commit` **{string|object|array}** a `Commit` object, or anything that can be passed to `check`
+- `[flat]` **{boolean}** if the returned result length is 1, then returns the first item
 
 **Returns**
-- `string` a commit stirng like `'fix(foo): bar baz'`
+- `Array<string>` an array of commit strings like `'fix(foo): bar baz'`,
+                    if `flat: true`, returns a `string`
 
 #### [.validate](/src/main.js#L68)
 Validates a single or multiple commit message(s) in form of string,
