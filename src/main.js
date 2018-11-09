@@ -19,14 +19,17 @@ export function parse(commits, flat = false) {
   if (commits && typeof commits === 'string') {
     return [parseCommit(commits)];
   }
-  if (commits && typeof commits === 'object' && !Array.isArray(commits)) {
-    return [checkCommit(commits)];
-  }
 
   const result = []
     .concat(commits)
     .filter(Boolean)
-    .reduce((acc, val) => acc.concat(parse(val)), []);
+    .reduce((acc, val) => {
+      if (commits && typeof commits === 'object' && !Array.isArray(commits)) {
+        return acc.concat(commits);
+      }
+
+      return acc.concat(parse(val));
+    }, []);
 
   return flat === true && result.length === 1 ? result[0] : result;
 }
