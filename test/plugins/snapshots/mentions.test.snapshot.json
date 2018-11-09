@@ -1,1 +1,0 @@
-{"plugins:mentions: basic":{"skip":false,"todo":false,"run":false,"isPending":false,"isRejected":false,"isFulfilled":true,"id":1,"str":"(t) => {\n  t.strictEqual(typeof mentions, 'function');\n}","title":"plugins:mentions: basic"}}

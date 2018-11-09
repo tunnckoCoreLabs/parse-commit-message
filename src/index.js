@@ -35,7 +35,7 @@ import {
 export function applyPlugins(plugins, commits) {
   const plgs = [].concat(plugins).filter(Boolean);
 
-  return commits.reduce((result, commit) => {
+  return [].concat(commits).reduce((result, commit) => {
     const cmt = plgs.reduce((acc, fn) => {
       const res = fn(acc);
       return mixinDeep(acc, res);

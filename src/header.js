@@ -1,9 +1,9 @@
-import { tryCatch, isValidString, errorMsg } from './utils';
+import { tryCatch, isValidString, isObject, errorMsg } from './utils';
 
 /**
  * Parses given `header` string into an header object.
  *
- * _The `parse*` methods are not doing checking and validation,
+ * _The `parse*` methods are not doing any checking and validation,
  * so you may want to pass the result to `validateHeader` or `checkHeader`,
  * or to `validateHeader` with `ret` option set to `true`._
  *
@@ -13,9 +13,8 @@ import { tryCatch, isValidString, errorMsg } from './utils';
  * @public
  */
 export function parseHeader(header) {
-  if (!header || (header && typeof header !== 'string')) {
-    const msg = `{ type: string, scope?: string, subject: scope }`;
-    throw new TypeError(`expect \`commit.header\` to be an object: ${msg}`);
+  if (!isValidString(header)) {
+    throw new TypeError(`expect \`header\` to be non empty string`);
   }
 
   const colonIdx = header.indexOf(': ');
@@ -33,7 +32,7 @@ export function parseHeader(header) {
   if (!regex.test(header)) {
     throw new TypeError(errorMsg);
   }
-  const [type, scope, subject] = regex.exec(header).slice(1);
+  const [type, scope = null, subject] = regex.exec(header).slice(1);
 
   return { type, scope, subject };
 }
@@ -50,7 +49,9 @@ export function parseHeader(header) {
 export function stringifyHeader(header) {
   const result = validateHeader(header, true);
 
-  if (result.error) throw result.error;
+  if (result.error) {
+    throw result.error;
+  }
 
   const { type, scope, subject } = result.value;
 
@@ -84,7 +85,7 @@ export function checkHeader(header) {
   // eslint-disable-next-line no-param-reassign
   header = header.header || header;
 
-  if (!header || (header && typeof header !== 'object')) {
+  if (!isObject(header)) {
     const msg = `{ type: string, scope?: string, subject: scope }`;
     throw new TypeError(`expect \`commit.header\` to be an object: ${msg}`);
   }
@@ -95,7 +96,11 @@ export function checkHeader(header) {
     throw new TypeError('commit.header.subject should be non empty string');
   }
 
-  const isValidScope = 'scope' in header ? isValidString(header.scope) : true;
+  const isValidScope =
+    'scope' in header && header.scope !== null
+      ? isValidString(header.scope)
+      : true;
+
   if (!isValidScope) {
     throw new TypeError(
       'commit.header.scope should be non empty string when given',

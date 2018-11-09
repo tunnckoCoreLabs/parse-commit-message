@@ -1,31 +1,26 @@
-import { tryCatch } from './utils';
+import { tryCatch, isObject } from './utils';
 import { parseCommit, stringifyCommit, checkCommit } from './commit';
 
 /**
  * Receives and parses a single or multiple commit message(s) in form of string,
  * object, array of strings, array of objects or mixed.
  *
- * _The `parse*` methods are not doing checking and validation,
- * so you may want to pass the result to `validate` or `check`,
- * or to `validate` with `ret` option set to `true`._
- *
  * @name  .parse
  * @param {string|object|array} commits a value to be parsed into an object like `Commit` type
  * @param {boolean} [flat] if the returned result length is 1, then returns the first item
- * @returns {Array<Commit>} if `flat` is true, returns a `Commit`
+ * @returns {Array<Commit>} if `flat: true`, returns a `Commit`
  * @public
  */
 export function parse(commits, flat = false) {
-  if (commits && typeof commits === 'string') {
-    return [parseCommit(commits)];
-  }
-
   const result = []
     .concat(commits)
     .filter(Boolean)
     .reduce((acc, val) => {
-      if (commits && typeof commits === 'object' && !Array.isArray(commits)) {
-        return acc.concat(commits);
+      if (typeof val === 'string') {
+        return acc.conact(parseCommit(val));
+      }
+      if (isObject(val)) {
+        return acc.concat(val);
       }
 
       return acc.concat(parse(val));
@@ -38,22 +33,24 @@ export function parse(commits, flat = false) {
  * Receives a `Commit` object, validates it using `validate`,
  * builds a "commit" message string and returns it.
  *
+ * This method does checking and validation too,
+ * so if you pass a string, it will be parsed and validated,
+ * and after that turned again to string.
+ *
  * @name  .stringify
- * @param {Commit} commit a `Commit` object
- * @returns {string} a commit stirng like `'fix(foo): bar baz'`
+ * @param {string|object|array} commit a `Commit` object, or anything that can be passed to `check`
+ * @param {boolean} [flat] if the returned result length is 1, then returns the first item
+ * @returns {Array<string>} an array of commit strings like `'fix(foo): bar baz'`,
+ *                     if `flat: true`, returns a `string`
  * @public
  */
-export function stringify(commit) {
-  if (commit && typeof commit === 'string') {
-    return [commit];
-  }
-  if (commit && typeof commit === 'object' && !Array.isArray(commit)) {
-    return [stringifyCommit(commit)];
-  }
-  return []
+export function stringify(commit, flat = false) {
+  const result = []
     .concat(commit)
     .filter(Boolean)
-    .reduce((acc, val) => acc.concat(stringify(val)), []);
+    .reduce((acc, val) => acc.concat(stringifyCommit(check(val))), []);
+
+  return flat === true && result.length === 1 ? result[0] : result;
 }
 
 /**
