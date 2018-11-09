@@ -24,11 +24,11 @@ import {
  * to the `Commit` object.
  *
  * _The `commits` should be coming from `parse`, `validate` (with `ret` option)
- * or the `check` methods._
+ * or the `check` methods. It does not do checking and validation._
  *
  * @name  .applyPlugins
  * @param {Array<Function>} plugins a simple function like `(commit) => {}`
- * @param {object|array} commits a value which should already be gone through `parse`
+ * @param {string|object|array} commits a value which should already be gone through `parse`
  * @returns {Array<Commit>} plus the modified or added properties from each function in `plugins`
  * @public
  */
