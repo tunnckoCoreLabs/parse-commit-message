@@ -1,5 +1,4 @@
-import joi from 'joi';
-import { tryCatch, isRequired, isOptional, errorMsg } from './utils';
+import { tryCatch, isValidString, errorMsg } from './utils';
 
 /**
  * Parses given `header` string into an header object.
@@ -89,17 +88,19 @@ export function checkHeader(header) {
     const msg = `{ type: string, scope?: string, subject: scope }`;
     throw new TypeError(`expect \`commit.header\` to be an object: ${msg}`);
   }
-
-  const schema = {
-    type: isRequired,
-    scope: isOptional,
-    subject: isRequired,
-  };
-
-  const result = joi.validate(header, schema);
-  if (result.error) {
-    result.error.message = `parse-commit-message: ${result.error.message}`;
-    throw result.error;
+  if (!isValidString(header.type)) {
+    throw new TypeError('commit.header.type should be non empty string');
   }
-  return result.value;
+  if (!isValidString(header.subject)) {
+    throw new TypeError('commit.header.subject should be non empty string');
+  }
+
+  const isValidScope = 'scope' in header ? isValidString(header.scope) : true;
+  if (!isValidScope) {
+    throw new TypeError(
+      'commit.header.scope should be non empty string when given',
+    );
+  }
+
+  return Object.assign({ scope: '' }, header);
 }

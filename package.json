@@ -18,7 +18,6 @@
     "collect-mentions": "^1.0.2",
     "dedent": "^0.7.0",
     "esm": "^3.0.84",
-    "joi": "^14.0.4",
     "mixin-deep": "^2.0.0"
   },
   "devDependencies": {

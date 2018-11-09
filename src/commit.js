@@ -1,5 +1,4 @@
-import joi from 'joi';
-import { tryCatch, isOptional } from './utils';
+import { tryCatch, isValidString } from './utils';
 import { parseHeader, stringifyHeader, validateHeader } from './header';
 
 /**
@@ -81,19 +80,14 @@ export function checkCommit(commit) {
     throw error;
   }
 
-  const schema = {
-    header,
-    body: isOptional,
-    footer: isOptional,
-  };
-
-  const result = joi.validate(commit, schema);
-  if (result.error) {
-    result.error.message = `parse-commit-message: ${result.error.message}`;
-    throw result.error;
+  const isValidBody = 'body' in commit ? isValidString(commit.body) : true;
+  if (!isValidBody) {
+    throw new TypeError('commit.body should be non empty string when given');
+  }
+  const isValid = 'footer' in commit ? isValidString(commit.footer) : true;
+  if (!isValid) {
+    throw new TypeError('commit.footer should be non empty string when given');
   }
 
-  // hack
-  result.value.header.scope = result.value.header.scope || '';
-  return result.value;
+  return Object.assign({ body: '', footer: '' }, commit, { header });
 }

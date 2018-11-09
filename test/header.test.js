@@ -11,4 +11,11 @@ test('header: basic', (t) => {
   t.strictEqual(typeof stringifyHeader, 'function');
   t.strictEqual(typeof validateHeader, 'function');
   t.strictEqual(typeof checkHeader, 'function');
+
+  const result = checkHeader({
+    type: 'fix',
+    subject: 'bar qux',
+  });
+
+  t.deepStrictEqual(result, { type: 'fix', scope: '', subject: 'bar qux' });
 });
