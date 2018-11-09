@@ -1,3 +1,4 @@
+import { EOL } from 'os';
 import { tryCatch, isValidString, isObject, errorMsg } from './utils';
 
 /**
@@ -14,17 +15,12 @@ import { tryCatch, isValidString, isObject, errorMsg } from './utils';
  */
 export function parseHeader(header) {
   if (!isValidString(header)) {
-    throw new TypeError(`expect \`header\` to be non empty string`);
+    throw new TypeError('expect `header` to be non empty string');
   }
 
-  const colonIdx = header.indexOf(': ');
-  if (colonIdx === -1) {
-    throw new TypeError(errorMsg);
-  }
-
-  const parts = header.split('\n');
+  const parts = header.split(EOL);
   // eslint-disable-next-line no-param-reassign
-  header = parts.length > 0 ? parts[0] : header;
+  header = parts.length > 1 ? parts[0] : header;
 
   // because the last question mark, which we totally need
   // eslint-disable-next-line unicorn/no-unsafe-regex
@@ -83,17 +79,17 @@ export function validateHeader(header, ret = false) {
  */
 export function checkHeader(header) {
   // eslint-disable-next-line no-param-reassign
-  header = header.header || header;
+  header = (header && header.header) || header;
 
   if (!isObject(header)) {
     const msg = `{ type: string, scope?: string, subject: scope }`;
-    throw new TypeError(`expect \`commit.header\` to be an object: ${msg}`);
+    throw new TypeError(`expect \`header\` to be an object: ${msg}`);
   }
   if (!isValidString(header.type)) {
-    throw new TypeError('commit.header.type should be non empty string');
+    throw new TypeError('header.type should be non empty string');
   }
   if (!isValidString(header.subject)) {
-    throw new TypeError('commit.header.subject should be non empty string');
+    throw new TypeError('header.subject should be non empty string');
   }
 
   const isValidScope =

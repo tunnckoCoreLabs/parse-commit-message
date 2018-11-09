@@ -1,3 +1,4 @@
+import { EOL } from 'os';
 import { tryCatch, isValidString, isObject } from './utils';
 import { parseHeader, stringifyHeader, validateHeader } from './header';
 
@@ -42,7 +43,13 @@ export function stringifyCommit(commit) {
 
   const header = stringifyHeader(commit.header);
 
-  return `${header}${commit.body}${commit.footer}`;
+  if (result.value.body) {
+    result.value.body = EOL + EOL + result.value.body;
+  }
+  if (result.value.footer) {
+    result.value.footer = EOL + EOL + result.value.footer;
+  }
+  return `${header}${result.value.body}${result.value.footer}`;
 }
 
 /**

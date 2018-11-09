@@ -2,7 +2,6 @@
   "extends": "./node_modules/@tunnckocore/config/nyc.json",
   "exclude": [
     "test",
-    "src/plugins/index.js",
-    "src/utils.js"
+    "src/plugins/index.js"
   ]
 }
