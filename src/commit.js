@@ -41,14 +41,13 @@ export function stringifyCommit(commit) {
     throw result.error;
   }
 
-  const header = stringifyHeader(commit.header);
+  const header = stringifyHeader(result.value.header);
 
-  if (result.value.body) {
-    result.value.body = EOL + EOL + result.value.body;
-  }
-  if (result.value.footer) {
-    result.value.footer = EOL + EOL + result.value.footer;
-  }
+  result.value.body = result.value.body ? EOL + EOL + result.value.body : '';
+  result.value.footer = result.value.footer
+    ? EOL + EOL + result.value.footer
+    : '';
+
   return `${header}${result.value.body}${result.value.footer}`;
 }
 
@@ -82,7 +81,7 @@ export function checkCommit(commit) {
     throw new TypeError(`expect \`commit\` to be an object: ${msg}`);
   }
 
-  const { error, value: header } = validateHeader(commit, true);
+  const { error, value: header } = validateHeader(commit.header, true);
   if (error) {
     throw error;
   }
@@ -105,5 +104,5 @@ export function checkCommit(commit) {
     throw new TypeError('commit.footer should be non empty string when given');
   }
 
-  return Object.assign({ body: '', footer: '' }, commit, { header });
+  return Object.assign({ body: null, footer: null }, commit, { header });
 }

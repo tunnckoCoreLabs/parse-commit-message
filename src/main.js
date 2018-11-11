@@ -17,7 +17,7 @@ export function parse(commits, flat = false) {
     .filter(Boolean)
     .reduce((acc, val) => {
       if (typeof val === 'string') {
-        return acc.conact(parseCommit(val));
+        return acc.concat(parseCommit(val));
       }
       if (isObject(val)) {
         return acc.concat(val);
@@ -48,7 +48,10 @@ export function stringify(commit, flat = false) {
   const result = []
     .concat(commit)
     .filter(Boolean)
-    .reduce((acc, val) => acc.concat(stringifyCommit(check(val))), []);
+    .reduce(
+      (acc, val) => acc.concat(check(val).map((x) => stringifyCommit(x))),
+      [],
+    );
 
   return flat === true && result.length === 1 ? result[0] : result;
 }

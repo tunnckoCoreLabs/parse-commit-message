@@ -103,5 +103,5 @@ export function checkHeader(header) {
     );
   }
 
-  return Object.assign({ scope: '' }, header);
+  return Object.assign({ scope: null }, header);
 }
