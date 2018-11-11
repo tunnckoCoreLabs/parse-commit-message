@@ -33,13 +33,13 @@
   "main": "index.js",
   "module": "src/index.js",
   "typings": "src/index.d.ts",
-  "version": "3.0.0-next.rc11",
+  "version": "3.0.0",
   "repository": "tunnckoCoreLabs/parse-commit-message",
   "homepage": "https://github.com/tunnckoCoreLabs/parse-commit-message",
   "author": "Charlike Mike Reagent (https://tunnckocore.com)",
   "publishConfig": {
     "access": "public",
-    "tag": "next"
+    "tag": "latest"
   },
   "renovate": {
     "extends": "tunnckocore"
