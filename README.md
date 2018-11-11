@@ -37,6 +37,13 @@ Project is [semantically](https://semver.org) & automatically published with [ne
 
 -->
 
+- Understands and follows [Conventional Commits](https://conventionalcommits.org/) Specification
+- Thoroughly tested with 100% coverage
+- Closed cycle: utilities for parsing, stringifying **and** validation
+- Infinitely extensible through plugins, [two built-in](#mappers)
+- Collecting mentions from commit message
+- Detection of breaking changes in commit
+
 ## Table of Contents
 
 - [Install](#install)
@@ -55,15 +62,15 @@ Project is [semantically](https://semver.org) & automatically published with [ne
     + [.stringifyHeader](#stringifyheader)
     + [.validateHeader](#validateheader)
     + [.checkHeader](#checkheader)
-  * [src/index.js](#srcindexjs)
-    + [.applyPlugins](#applyplugins)
-    + [.plugins](#plugins)
-    + [.mappers](#mappers)
   * [src/main.js](#srcmainjs)
     + [.parse](#parse)
     + [.stringify](#stringify)
     + [.validate](#validate)
     + [.check](#check)
+  * [src/index.js](#srcindexjs)
+    + [.applyPlugins](#applyplugins)
+    + [.plugins](#plugins)
+    + [.mappers](#mappers)
   * [src/plugins/increment.js](#srcpluginsincrementjs)
     + [increment](#increment)
   * [src/plugins/mentions.js](#srcpluginsmentionsjs)
@@ -144,7 +151,7 @@ _Generated using [docks](http://npm.im/docks)._
 
 ### [src/commit.js](/src/commit.js)
 
-#### [.parseCommit](/src/commit.js#L17)
+#### [.parseCommit](/src/commit.js#L18)
 Receives a full commit message `string` and parses it into an `Commit` object
 and returns it.
 
@@ -158,7 +165,7 @@ or to `validateHeader` with `ret` option set to `true`._
 **Returns**
 - `Commit` a standard object like `{ header: Header, body?, footer? }`
 
-#### [.stringifyCommit](/src/commit.js#L37)
+#### [.stringifyCommit](/src/commit.js#L38)
 Receives a `Commit` object, validates it using `validateCommit`,
 builds a "commit" string and returns it.
 
@@ -168,7 +175,7 @@ builds a "commit" string and returns it.
 **Returns**
 - `string` a commit nessage stirng like `'fix(foo): bar baz'`
 
-#### [.validateCommit](/src/commit.js#L59)
+#### [.validateCommit](/src/commit.js#L65)
 Validates given `Commit` object and returns `boolean`.
 You may want to set `ret` to `true` return an object instead of throwing.
 
@@ -180,7 +187,7 @@ You may want to set `ret` to `true` return an object instead of throwing.
 - `undefined` if `ret` is `true` then returns `{ value, error }` object,
                          where `value` is `Commit` and `error` a standard `Error`
 
-#### [.checkCommit](/src/commit.js#L72)
+#### [.checkCommit](/src/commit.js#L78)
 Receives a `Commit` and checks if it is valid.
 
 **Params**
@@ -191,7 +198,7 @@ Receives a `Commit` and checks if it is valid.
 
 ### [src/header.js](/src/header.js)
 
-#### [.parseHeader](/src/header.js#L15)
+#### [.parseHeader](/src/header.js#L16)
 Parses given `header` string into an header object.
 
 _The `parse*` methods are not doing any checking and validation,
@@ -204,7 +211,7 @@ or to `validateHeader` with `ret` option set to `true`._
 **Returns**
 - `Header` a `Header` object like `{ type, scope?, subject }`
 
-#### [.stringifyHeader](/src/header.js#L49)
+#### [.stringifyHeader](/src/header.js#L45)
 Receives a `header` object, validates it using `validateHeader`,
 builds a "header" string and returns it.
 
@@ -214,7 +221,7 @@ builds a "header" string and returns it.
 **Returns**
 - `string` a header stirng like `'fix(foo): bar baz'`
 
-#### [.validateHeader](/src/header.js#L72)
+#### [.validateHeader](/src/header.js#L68)
 Validates given `header` object and returns `boolean`.
 You may want to pass `ret` to return an object instead of throwing.
 
@@ -226,7 +233,7 @@ You may want to pass `ret` to return an object instead of throwing.
 - `undefined` if `ret` is `true` then returns `{ value, error }` object,
                          where `value` is `Header` and `error` a standard `Error`
 
-#### [.checkHeader](/src/header.js#L84)
+#### [.checkHeader](/src/header.js#L80)
 Receives a `Header` and checks if it is valid.
 
 **Params**
@@ -234,6 +241,60 @@ Receives a `Header` and checks if it is valid.
 
 **Returns**
 - `Header` returns the same as given if no problems, otherwise it will throw.
+
+### [src/main.js](/src/main.js)
+
+#### [.parse](/src/main.js#L14)
+Receives and parses a single or multiple commit message(s) in form of string,
+object, array of strings, array of objects or mixed.
+
+**Params**
+- `commits` **{string|object|array}** a value to be parsed into an object like `Commit` type
+- `[flat]` **{boolean}** if the returned result length is 1, then returns the first item
+
+**Returns**
+- `Array<Commit>` if `flat: true`, returns a `Commit`
+
+#### [.stringify](/src/main.js#L47)
+Receives a `Commit` object, validates it using `validate`,
+builds a "commit" message string and returns it.
+
+This method does checking and validation too,
+so if you pass a string, it will be parsed and validated,
+and after that turned again to string.
+
+**Params**
+- `commit` **{string|object|array}** a `Commit` object, or anything that can be passed to `check`
+- `[flat]` **{boolean}** if the returned result length is 1, then returns the first item
+
+**Returns**
+- `Array<string>` an array of commit strings like `'fix(foo): bar baz'`,
+                    if `flat: true`, returns a `string`
+
+#### [.validate](/src/main.js#L71)
+Validates a single or multiple commit message(s) in form of string,
+object, array of strings, array of objects or mixed.
+You may want to pass `ret` to return an object instead of throwing.
+
+**Params**
+- `commits` **{string|object|array}** a value to be parsed & validated into an object like `Commit` type
+- `[ret]` **{boolean}** to return result instead of throwing, default `false`
+
+**Returns**
+- `undefined` if `ret` is `true` then returns `{ value, error }` object,
+                         where `value` is `Commit|Array<Commit>` and `error` a standard `Error`
+
+#### [.check](/src/main.js#L86)
+Receives a single or multiple commit message(s) in form of string,
+object, array of strings, array of objects or mixed.
+
+**Params**
+- `commits` **{string|object|array}** a value to be parsed & validated into an object like `Commit` type
+- `[flat]` **{boolean}** if the returned result length is 1, then returns the first item
+
+**Returns**
+- `Array<Commit>` returns the same as given if no problems, otherwise it will throw;
+                    if `flat: true`, returns a `Commit`
 
 ### [src/index.js](/src/index.js)
 
@@ -337,60 +398,6 @@ console.log(commit)
 // }]
 ```
 
-### [src/main.js](/src/main.js)
-
-#### [.parse](/src/main.js#L14)
-Receives and parses a single or multiple commit message(s) in form of string,
-object, array of strings, array of objects or mixed.
-
-**Params**
-- `commits` **{string|object|array}** a value to be parsed into an object like `Commit` type
-- `[flat]` **{boolean}** if the returned result length is 1, then returns the first item
-
-**Returns**
-- `Array<Commit>` if `flat: true`, returns a `Commit`
-
-#### [.stringify](/src/main.js#L47)
-Receives a `Commit` object, validates it using `validate`,
-builds a "commit" message string and returns it.
-
-This method does checking and validation too,
-so if you pass a string, it will be parsed and validated,
-and after that turned again to string.
-
-**Params**
-- `commit` **{string|object|array}** a `Commit` object, or anything that can be passed to `check`
-- `[flat]` **{boolean}** if the returned result length is 1, then returns the first item
-
-**Returns**
-- `Array<string>` an array of commit strings like `'fix(foo): bar baz'`,
-                    if `flat: true`, returns a `string`
-
-#### [.validate](/src/main.js#L68)
-Validates a single or multiple commit message(s) in form of string,
-object, array of strings, array of objects or mixed.
-You may want to pass `ret` to return an object instead of throwing.
-
-**Params**
-- `commits` **{string|object|array}** a value to be parsed & validated into an object like `Commit` type
-- `[ret]` **{boolean}** to return result instead of throwing, default `false`
-
-**Returns**
-- `undefined` if `ret` is `true` then returns `{ value, error }` object,
-                         where `value` is `Commit|Array<Commit>` and `error` a standard `Error`
-
-#### [.check](/src/main.js#L83)
-Receives a single or multiple commit message(s) in form of string,
-object, array of strings, array of objects or mixed.
-
-**Params**
-- `commits` **{string|object|array}** a value to be parsed & validated into an object like `Commit` type
-- `[flat]` **{boolean}** if the returned result length is 1, then returns the first item
-
-**Returns**
-- `Array<Commit>` returns the same as given if no problems, otherwise it will throw;
-                    if `flat: true`, returns a `Commit`
-
 ### [src/plugins/increment.js](/src/plugins/increment.js)
 
 #### [increment](/src/plugins/increment.js#L13)
@@ -434,8 +441,9 @@ existance!
 - [@tunnckocore/config](https://www.npmjs.com/package/@tunnckocore/config): All the configs for all the tools, in one place | [homepage](https://github.com/tunnckoCoreLabs/config "All the configs for all the tools, in one place")
 - [@tunnckocore/create-project](https://www.npmjs.com/package/@tunnckocore/create-project): Create and scaffold a new project, its GitHub repository and contents | [homepage](https://github.com/tunnckoCoreLabs/create-project "Create and scaffold a new project, its GitHub repository and contents")
 - [@tunnckocore/execa](https://www.npmjs.com/package/@tunnckocore/execa): Thin layer on top of [execa][] that allows executing multiple commands in… [more](https://github.com/tunnckoCoreLabs/execa) | [homepage](https://github.com/tunnckoCoreLabs/execa "Thin layer on top of [execa][] that allows executing multiple commands in parallel or in sequence")
+- [@tunnckocore/package-json](https://www.npmjs.com/package/@tunnckocore/package-json): Simple and fast getting of latest package.json metadata for a npm module… [more](https://github.com/tunnckoCoreLabs/package-json) | [homepage](https://github.com/tunnckoCoreLabs/package-json "Simple and fast getting of latest package.json metadata for a npm module, using axios and unpkg as a source, because npm registry is basically slow")
 - [@tunnckocore/scripts](https://www.npmjs.com/package/@tunnckocore/scripts): Universal and minimalist scripts & tasks runner. | [homepage](https://github.com/tunnckoCoreLabs/scripts "Universal and minimalist scripts & tasks runner.")
-- [@tunnckocore/update](https://www.npmjs.com/package/@tunnckocore/update): Update a repository with latest templates from `charlike`. | [homepage](https://github.com/tunnckoCoreLabs/update "Update a repository with latest templates from `charlike`.")
+- [@tunnckocore/update](https://www.npmjs.com/package/@tunnckocore/update): Update to latest project files and templates, based on `charlike` scaffolder | [homepage](https://github.com/tunnckoCoreLabs/update "Update to latest project files and templates, based on `charlike` scaffolder")
 - [asia](https://www.npmjs.com/package/asia): Blazingly fast, magical and minimalist testing framework, for Today and Tomorrow | [homepage](https://github.com/olstenlarck/asia#readme "Blazingly fast, magical and minimalist testing framework, for Today and Tomorrow")
 - [charlike](https://www.npmjs.com/package/charlike): Small, fast and streaming project scaffolder with support for hundreds of template… [more](https://github.com/tunnckoCoreLabs/charlike) | [homepage](https://github.com/tunnckoCoreLabs/charlike "Small, fast and streaming project scaffolder with support for hundreds of template engines and sane defaults")
 - [docks](https://www.npmjs.com/package/docks): Extensible system for parsing and generating documentation. It just freaking works! | [homepage](https://github.com/tunnckoCore/docks "Extensible system for parsing and generating documentation. It just freaking works!")
