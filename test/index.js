@@ -1,6 +1,7 @@
+import { EOL } from 'os';
 import test from 'asia';
 import dedent from 'dedent';
-import { applyPlugins, plugins, mappers, parse } from '../src';
+import { applyPlugins, plugins, mappers, parse, check } from '../src';
 
 test('index: basic', (t) => {
   t.strictEqual(typeof applyPlugins, 'function');
@@ -107,4 +108,28 @@ test('should result.increment be false if no bump needed', (t) => {
   t.strictEqual(result.header.type, 'chore');
   t.strictEqual(result.header.scope, 'zz');
   t.strictEqual(result.header.subject, 'foo bar');
+});
+
+test('ensure most common usage', (t) => {
+  const commitMsg = 'fix: bar qux';
+  const res1 = applyPlugins(plugins, check(parse(commitMsg)));
+  const res2 = applyPlugins(plugins, check(parse(commitMsg + EOL)));
+  const res3 = applyPlugins(plugins, check(parse(commitMsg + EOL + EOL)));
+
+  t.deepStrictEqual(res1, res2);
+
+  t.strictEqual(res2[0].body, null);
+  t.strictEqual(res2[0].header.type, 'fix');
+  t.strictEqual(res2[0].header.scope, null);
+  t.strictEqual(res2[0].header.subject, 'bar qux');
+  t.strictEqual(res2[0].isBreaking, false);
+  t.strictEqual(res2[0].increment, 'patch');
+
+  const [cmt] = res3;
+  t.strictEqual(cmt.header.type, 'fix');
+  t.strictEqual(cmt.header.scope, null);
+  t.strictEqual(cmt.header.subject, 'bar qux');
+  t.strictEqual(cmt.body.trim(), '');
+  t.strictEqual(cmt.isBreaking, false);
+  t.strictEqual(cmt.increment, 'patch');
 });

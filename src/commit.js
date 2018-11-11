@@ -149,11 +149,11 @@ export function checkCommit(commit) {
 
   const isValidBody =
     'body' in commit && commit.body !== null
-      ? isValidString(commit.body)
+      ? typeof commit.body === 'string'
       : true;
 
   if (!isValidBody) {
-    throw new TypeError('commit.body should be non empty string when given');
+    throw new TypeError('commit.body should be string when given');
   }
 
   const isValid =
