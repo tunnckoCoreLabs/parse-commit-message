@@ -98,3 +98,13 @@ test('should add both mentions and increment plugins and respective props to Com
   t.strictEqual(res.header.subject, 'yeah @bar & @qux zaz');
   t.strictEqual(res.body, 'BREAKING CHANGE: oh yeah');
 });
+
+test('should result.increment be false if no bump needed', (t) => {
+  const [result] = applyPlugins(mappers.increment, parse('chore(zz): foo bar'));
+
+  t.strictEqual(result.increment, false);
+  t.strictEqual(result.isBreaking, false);
+  t.strictEqual(result.header.type, 'chore');
+  t.strictEqual(result.header.scope, 'zz');
+  t.strictEqual(result.header.subject, 'foo bar');
+});

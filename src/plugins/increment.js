@@ -12,7 +12,7 @@
  */
 export default function increment(commit) {
   let isBreaking = isBreakingChange(commit);
-  let commitIncrement = '';
+  let commitIncrement = false;
 
   if (/fix|bugfix|patch/.test(commit.header.type)) {
     commitIncrement = 'patch';

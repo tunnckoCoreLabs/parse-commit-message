@@ -61,8 +61,8 @@
         "charlike",
         "docks",
         "gitcommit",
+        "git-commits-since",
         "@tunnckocore/execa",
-        "@tunnckocore/package-json",
         "@tunnckocore/create-project",
         "@tunnckocore/update",
         "@tunnckocore/config",
@@ -73,10 +73,13 @@
       "reflinks": true
     },
     "reflinks": [
+      "collect-mentions",
+      "execa",
       "new-release",
       "semantic-release",
-      "collect-mentions",
-      "execa"
+      "detect-next-version",
+      "parse-commit-message",
+      "recommended-bump"
     ]
   }
 }

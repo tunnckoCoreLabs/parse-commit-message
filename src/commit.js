@@ -5,10 +5,23 @@ import { parseHeader, stringifyHeader, validateHeader } from './header';
 /**
  * Receives a full commit message `string` and parses it into an `Commit` object
  * and returns it.
+ * Basically the same as [.parse](#parse), except that
+ * it only can accept single string.
  *
  * _The `parse*` methods are not doing any checking and validation,
- * so you may want to pass the result to `validateHeader` or `checkHeader`,
- * or to `validateHeader` with `ret` option set to `true`._
+ * so you may want to pass the result to `validateCommit` or `checkCommit`,
+ * or to `validateCommit` with `ret` option set to `true`._
+ *
+ * @example
+ * import { parseCommit } from 'parse-commit-message';
+ *
+ * const commitObj = parseCommit('foo: bar qux\n\nokey dude');
+ * console.log(commitObj);
+ * // => {
+ * //   header: { type: 'foo', scope: null, subject: 'bar qux' },
+ * //   body: 'okey dude',
+ * //   footer: null,
+ * // }
  *
  * @name  .parseCommit
  * @param {string} commit a message like `'fix(foo): bar baz\n\nSome awesome body!'`
@@ -28,10 +41,21 @@ export function parseCommit(commit) {
 
 /**
  * Receives a `Commit` object, validates it using `validateCommit`,
- * builds a "commit" string and returns it.
+ * builds a "commit" string and returns it. Method throws if problems found.
+ * Basically the same as [.stringify](#stringify), except that
+ * it only can accept single `Commit` object.
+ *
+ * @example
+ * import { stringifyCommit } from 'parse-commit-message';
+ *
+ * const commitStr = stringifyCommit({
+ *   header: { type: 'foo', subject: 'bar qux' },
+ *   body: 'okey dude',
+ * });
+ * console.log(commitStr); // => 'foo: bar qux\n\nokey dude'
  *
  * @name  .stringifyCommit
- * @param {Commit} header a `Commit` object like `{ header: Header, body?, footer? }`
+ * @param {Commit} commit a `Commit` object like `{ header: Header, body?, footer? }`
  * @returns {string} a commit nessage stirng like `'fix(foo): bar baz'`
  * @public
  */
@@ -54,9 +78,30 @@ export function stringifyCommit(commit) {
 /**
  * Validates given `Commit` object and returns `boolean`.
  * You may want to set `ret` to `true` return an object instead of throwing.
+ * Basically the same as [.validate](#validate), except that
+ * it only can accept single `Commit` object.
+ *
+ * @example
+ * import { validateCommit } from 'parse-commit-message';
+ *
+ * const commit = {
+ *   header: { type: 'foo', subject: 'bar qux' },
+ *   body: 'okey dude',
+ * };
+ *
+ * const commitIsValid = validateCommit(commit);
+ * console.log(commitIsValid); // => true
+ *
+ * const { value } = validateCommit(commit, true);
+ * console.log(value);
+ * // => {
+ * //   header: { type: 'foo', scope: null, subject: 'bar qux' },
+ * //   body: 'okey dude',
+ * //   footer: null,
+ * // }
  *
  * @name  .validateCommit
- * @param {Commit} header a `Commit` like `{ header: Header, body?, footer? }`
+ * @param {Commit} commit a `Commit` like `{ header: Header, body?, footer? }`
  * @param {boolean} [ret] to return result instead of throwing, default `false`
  * @returns {boolean|object} if `ret` is `true` then returns `{ value, error }` object,
  *                          where `value` is `Commit` and `error` a standard `Error`
@@ -67,11 +112,27 @@ export function validateCommit(commit, ret = false) {
 }
 
 /**
- * Receives a `Commit` and checks if it is valid.
+ * Receives a `Commit` and checks if it is valid. Method throws if problems found.
+ * Basically the same as [.check](#check), except that
+ * it only can accept single `Commit` object.
  *
+ * @example
+ * import { checkCommit } from 'parse-commit-message';
+ *
+ * try {
+ *   checkCommit({ header: { type: 'fix' } });
+ * } catch(err) {
+ *   console.log(err);
+ *   // => TypeError: header.subject should be non empty string
+ * }
+ *
+ * // throws because can accept only Commit objects
+ * checkCommit('foo bar baz');
+ * checkCommit(123);
+ * checkCommit([{ header: { type: 'foo', subject: 'bar' } }]);
  *
  * @name  .checkCommit
- * @param {Commit} header a `Commit` like `{ header: Header, body?, footer? }`
+ * @param {Commit} commit a `Commit` like `{ header: Header, body?, footer? }`
  * @returns {Commit} returns the same as given if no problems, otherwise it will throw.
  * @public
  */
