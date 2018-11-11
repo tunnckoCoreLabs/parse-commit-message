@@ -1,113 +1,55 @@
 {
   "name": "parse-commit-message",
-  "description": "An extensible parser for commit message that follows Conventional Commits v1 spec",
+  "description": "Extensible parser for git commit messages following Conventional Commits Specification",
   "license": "Apache-2.0",
   "licenseStart": "2017",
   "scripts": {
-    "inst": "pnpm i --side-effects-cache-readonly --shamefully-flatten --prefer-offline --prefer-frozen-shrinkwrap",
-    "lint": "eslint '**/*.ts' --fix --format codeframe",
-    "test": "BABEL_ENV=v7 nyc --require ./babel-register-ts asia 'test/**/*.ts'",
-    "gitadd": "git status --porcelain && git add -A",
-    "commit-dry": "npm run gitadd && gitcommit -sS",
-    "precommit": "npm run lint && npm test && npm run gitadd",
-    "commit": "gitcommit -sS",
-    "types": "tsc --emitDeclarationOnly --declaration",
-    "parcel:cli": "BABEL_ENV=v6 parcel build src/index.ts --no-source-maps --detailed-report --experimental-scope-hoisting",
-    "parcel:umd": "BABEL_ENV=v6 parcel build src/index.ts --no-source-maps --detailed-report --experimental-scope-hoisting --target browser -d dist/umd --global parseCommitMessage",
-    "parcel:cjs": "BABEL_ENV=v6 parcel build src/index.ts --no-source-maps --detailed-report --experimental-scope-hoisting --target node -d dist/cjs --no-minify",
-    "prebuild": "rm -rf dist && npm run types",
-    "build": "npm run parcel:umd && npm run parcel:cjs",
-    "release": "new-release"
+    "docs": "docks --outfile .verb.md && verb",
+    "lint": "eslint '**/*.js' --cache --fix --quiet --format codeframe",
+    "test": "nyc asia",
+    "commit": "yarn lint && yarn test && yarn dry",
+    "dry": "git add -A && git status --porcelain && gitcommit -sS",
+    "release": "tunnckocore-release",
+    "clean": "rm -rf node_modules",
+    "clean:cache": "rm -rf node_modules/.cache"
   },
   "engines": {
-    "node": "^8.9.0 || ^10.6.0"
+    "node": "^8.11.0 || >=10.13.0"
   },
   "dependencies": {
-    "collect-mentions": "^1.0.1"
+    "collect-mentions": "^1.0.2",
+    "dedent": "^0.7.0",
+    "esm": "^3.0.84",
+    "mixin-deep": "^2.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.54",
-    "@babel/preset-env": "^7.0.0-beta.54",
-    "@babel/preset-stage-3": "^7.0.0-beta.54",
-    "@babel/preset-typescript": "^7.0.0-beta.54",
-    "@babel/register": "^7.0.0-beta.54",
-    "@types/node": "^10.5.3",
-    "babel-core": "^6.26.3",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-flow": "^6.23.0",
-    "babel-preset-stage-3": "^6.24.1",
-    "babel-register": "^6.26.0",
-    "asia": "^0.19.7",
-    "gitcommit": "^1.0.8",
-    "new-release": "^4.0.3",
-    "nyc": "^12.0.2",
-    "parcel-bundler": "^1.9.7",
-    "typescript": "^2.9.2",
-    "xaxa": "^2.0.0"
+    "@tunnckocore/config": "^1.0.0",
+    "asia": "^0.19.7"
   },
   "files": [
-    "dist"
+    "src",
+    "index.js"
   ],
-  "main": "dist/cjs/index.js",
-  "unpkg": "dist/umd/index.js",
-  "typings": "dist/typings/index.d.ts",
-  "version": "0.0.0-semantically-released",
-  "repository": "olstenlarck/parse-commit-message",
-  "homepage": "https://github.com/olstenlarck/parse-commit-message",
-  "author": "Charlike Mike Reagent (https://i.am.charlike.online)",
+  "main": "index.js",
+  "module": "src/index.js",
+  "typings": "src/index.d.ts",
+  "version": "3.0.0",
+  "repository": "tunnckoCoreLabs/parse-commit-message",
+  "homepage": "https://github.com/tunnckoCoreLabs/parse-commit-message",
+  "author": "Charlike Mike Reagent (https://tunnckocore.com)",
   "publishConfig": {
-    "access": "public"
-  },
-  "eslintConfig": {
-    "extends": "xaxa",
-    "settings": {
-      "import/resolver": {
-        "node": {
-          "extensions": [
-            ".mjs",
-            ".js",
-            ".jsx",
-            ".ts",
-            ".tsx"
-          ]
-        }
-      }
-    }
+    "access": "public",
+    "tag": "latest"
   },
   "renovate": {
     "extends": "tunnckocore"
-  },
-  "nyc": {
-    "statements": 100,
-    "functions": 100,
-    "branches": 100,
-    "lines": 100,
-    "cache": true,
-    "check-coverage": true,
-    "reporter": [
-      "lcov",
-      "text"
-    ],
-    "exclude": [
-      "node_modules",
-      "test",
-      "babel-register*"
-    ],
-    "extension": [
-      ".js",
-      ".ts",
-      ".jsx",
-      ".tsx",
-      ".mjs"
-    ]
   },
   "verb": {
     "run": true,
     "toc": {
       "render": true,
       "method": "preWrite",
-      "maxdepth": 3,
-      "footer": ""
+      "maxdepth": 4
     },
     "layout": "empty",
     "tasks": [
@@ -116,19 +58,28 @@
     "related": {
       "list": [
         "asia",
+        "charlike",
+        "docks",
         "gitcommit",
-        "new-release",
-        "xaxa",
-        "collect-mentions",
-        "charlike"
+        "git-commits-since",
+        "@tunnckocore/execa",
+        "@tunnckocore/create-project",
+        "@tunnckocore/update",
+        "@tunnckocore/config",
+        "@tunnckocore/scripts"
       ]
     },
     "lint": {
       "reflinks": true
     },
     "reflinks": [
+      "collect-mentions",
+      "execa",
       "new-release",
-      "semantic-release"
+      "semantic-release",
+      "detect-next-version",
+      "parse-commit-message",
+      "recommended-bump"
     ]
   }
 }

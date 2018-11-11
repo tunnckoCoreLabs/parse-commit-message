@@ -1,7 +1,7 @@
 # Contributing Guide :100:
 
 > _Hello stranger! :sparkles: Please, read the [Code Of Conduct](./CODE_OF_CONDUCT.md) and the full guide at
-> [tunnckoCore/contributing](https://github.com/tunnckoCore/contributing)!  
+> [tunnckoCore/contributing](https://github.com/tunnckoCoreLabs/contributing)!  
 > Even if you are an experienced developer or active open source maintainer, it worth look over there._
 
 ![welcome-teal](https://cloud.githubusercontent.com/assets/194400/22215755/76cb4dbc-e194-11e6-95ed-7def95e68f14.png)
