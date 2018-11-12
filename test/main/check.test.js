@@ -45,3 +45,18 @@ test('should check(object|array) return array even with flat=true, if more than 
     footer: null,
   });
 });
+
+test("should check('') fail when empty string given", (t) => {
+  t.throws(() => check(''), TypeError);
+  t.throws(() => check(''), /expect `commit` to be non empty string/);
+});
+test('should check fail on false values, correctly', (t) => {
+  t.throws(() => check(), TypeError);
+  t.throws(() => check(), /expect `commit` to be an object/);
+
+  t.throws(() => check(undefined), TypeError);
+  t.throws(() => check(undefined), /expect `commit` to be an object/);
+
+  t.throws(() => check(null), TypeError);
+  t.throws(() => check(null), /expect `commit` to be an object/);
+});

@@ -211,7 +211,7 @@ export function validate(commits, ret = false) {
 export function check(commits, flat) {
   const result = []
     .concat(commits)
-    .filter(Boolean)
+    .filter((x) => x !== null || x !== undefined)
     .reduce((acc, commit) => {
       if (typeof commit === 'string') {
         commit = parseCommit(commit); // eslint-disable-line no-param-reassign
