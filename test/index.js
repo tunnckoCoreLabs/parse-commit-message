@@ -112,24 +112,39 @@ test('should result.increment be false if no bump needed', (t) => {
 
 test('ensure most common usage', (t) => {
   const commitMsg = 'fix: bar qux';
-  const res1 = applyPlugins(plugins, check(parse(commitMsg)));
-  const res2 = applyPlugins(plugins, check(parse(commitMsg + EOL)));
-  const res3 = applyPlugins(plugins, check(parse(commitMsg + EOL + EOL)));
+  const [res1] = applyPlugins(plugins, check(parse(commitMsg)));
+  const [res2] = applyPlugins(plugins, check(parse(commitMsg + EOL)));
+  const [res3] = applyPlugins(plugins, check(parse(commitMsg + EOL + EOL)));
 
   t.deepStrictEqual(res1, res2);
 
-  t.strictEqual(res2[0].body, null);
-  t.strictEqual(res2[0].header.type, 'fix');
-  t.strictEqual(res2[0].header.scope, null);
-  t.strictEqual(res2[0].header.subject, 'bar qux');
-  t.strictEqual(res2[0].isBreaking, false);
-  t.strictEqual(res2[0].increment, 'patch');
+  t.strictEqual(res2.body, null);
+  t.strictEqual(res2.header.type, 'fix');
+  t.strictEqual(res2.header.scope, null);
+  t.strictEqual(res2.header.subject, 'bar qux');
+  t.strictEqual(res2.isBreaking, false);
+  t.strictEqual(res2.increment, 'patch');
 
-  const [cmt] = res3;
-  t.strictEqual(cmt.header.type, 'fix');
-  t.strictEqual(cmt.header.scope, null);
-  t.strictEqual(cmt.header.subject, 'bar qux');
-  t.strictEqual(cmt.body.trim(), '');
-  t.strictEqual(cmt.isBreaking, false);
-  t.strictEqual(cmt.increment, 'patch');
+  t.strictEqual(res3.body.trim(), '');
+  t.strictEqual(res3.header.type, 'fix');
+  t.strictEqual(res3.header.scope, null);
+  t.strictEqual(res3.header.subject, 'bar qux');
+  t.strictEqual(res3.isBreaking, false);
+  t.strictEqual(res3.increment, 'patch');
+});
+
+test('ensure empty footer is allowed (git commit defaults)', (t) => {
+  const commitMsg = 'fix: bar qux\n\nBar qux';
+  const [res1] = applyPlugins(plugins, check(parse(commitMsg)));
+  const [res2] = applyPlugins(plugins, check(parse(commitMsg + EOL)));
+  const [res3] = applyPlugins(plugins, check(parse(commitMsg + EOL + EOL)));
+
+  t.strictEqual(res1.body, 'Bar qux');
+  t.strictEqual(res1.footer, null);
+
+  t.strictEqual(res2.body, `Bar qux${EOL}`);
+  t.strictEqual(res2.footer, null);
+
+  t.strictEqual(res3.body, 'Bar qux');
+  t.strictEqual(res3.footer, '');
 });

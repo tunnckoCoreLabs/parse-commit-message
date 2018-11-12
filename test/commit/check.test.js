@@ -38,10 +38,7 @@ test('.checkCommit throw if commit.body is not a string when given', (t) => {
 });
 test('.checkCommit throw if commit.footer is not a string when given', (t) => {
   const commit = { header: { type: 'fix', subject: 'qux zaz' }, footer: 123 };
-  t.throws(
-    () => checkCommit(commit),
-    /footer should be non empty string when given/,
-  );
+  t.throws(() => checkCommit(commit), /footer should be string when given/);
 });
 
 test('.checkCommit should commit.body be `null` when explicitly null given', (t) => {
@@ -96,10 +93,18 @@ test('.checkCommit object with scope, body and footer', (t) => {
   t.deepStrictEqual(checkCommit(commit), commit);
 });
 
-test('should checkCommit allow empty string body', (t) => {
+test('should checkCommit allow empty string body (git commit deafults)', (t) => {
   const header = { type: 'feat', scope: 'zazzy', subject: 'okey dude' };
   const commit = { header, body: '' };
   const result = checkCommit(commit);
 
   t.strictEqual(result.body, '');
+});
+
+test('should checkCommit allow empty string footer (git commit deafults)', (t) => {
+  const header = { type: 'feat', scope: 'zazzy', subject: 'okey dude' };
+  const commit = { header, footer: '' };
+  const result = checkCommit(commit);
+
+  t.strictEqual(result.footer, '');
 });

@@ -158,11 +158,11 @@ export function checkCommit(commit) {
 
   const isValid =
     'footer' in commit && commit.footer !== null
-      ? isValidString(commit.footer)
+      ? typeof commit.footer === 'string'
       : true;
 
   if (!isValid) {
-    throw new TypeError('commit.footer should be non empty string when given');
+    throw new TypeError('commit.footer should be string when given');
   }
 
   return Object.assign({ body: null, footer: null }, commit, { header });
