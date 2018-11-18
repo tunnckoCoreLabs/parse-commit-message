@@ -6,16 +6,17 @@
   "scripts": {
     "docs": "docks --outfile .verb.md && verb",
     "lint": "eslint '**/*.js' --cache --fix --quiet --format codeframe",
+    "test-only": "asia -r esm",
     "test": "nyc asia",
-    "test-only": "asia -r esm -u",
-    "commit": "yarn lint && yarn test && yarn dry",
-    "dry": "git add -A && git status --porcelain && gitcommit -sS",
+    "precommit": "yarn run lint && yarn run test-only",
+    "commit": "yarn dry",
+    "dry": "git add -A && git status --porcelain && gitcommit",
     "release": "tunnckocore-release",
     "clean": "rm -rf node_modules",
     "clean:cache": "rm -rf node_modules/.cache"
   },
   "engines": {
-    "node": "^8.11.0 || >=10.13.0"
+    "node": "^8.10.0 || >=10.13.0"
   },
   "dependencies": {
     "collect-mentions": "^1.0.2",
