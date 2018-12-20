@@ -14,13 +14,13 @@ export default function increment(commit) {
   let isBreaking = isBreakingChange(commit);
   let commitIncrement = false;
 
-  if (/fix|bugfix|patch/.test(commit.header.type)) {
+  if (/fix|bugfix|patch/i.test(commit.header.type)) {
     commitIncrement = 'patch';
   }
-  if (/feat|feature|minor/.test(commit.header.type)) {
+  if (/feat|feature|minor/i.test(commit.header.type)) {
     commitIncrement = 'minor';
   }
-  if (/break|breaking|major/.test(commit.header.type) || isBreaking) {
+  if (/break|breaking|major/i.test(commit.header.type) || isBreaking) {
     commitIncrement = 'major';
   }
   isBreaking = isBreaking || commitIncrement === 'major';

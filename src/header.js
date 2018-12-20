@@ -37,7 +37,7 @@ export function parseHeader(header) {
 
   // because the last question mark, which we totally need
   // eslint-disable-next-line unicorn/no-unsafe-regex
-  const regex = /^(\w+)(?:\((.+)\))?: (.+)$/;
+  const regex = /^(\w+)(?:\((.+)\))?: (.+)$/i;
   if (!regex.test(header)) {
     throw new TypeError(errorMsg);
   }
